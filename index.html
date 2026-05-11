@@ -417,26 +417,55 @@ function clearBasket(){
   });
   basket={};updateBasket();saveBasket();
 }
+function renderBitem(i){
+  var img=i.imageUrl?'<img src="'+i.imageUrl+'" onerror="this.outerHTML=\'<div class=bitem-noimg>ไม่มีรูป</div>\'">':'<div class="bitem-noimg">ไม่มีรูป</div>';
+  var avail=isAvailable(i);
+  var nxt='';for(var d=0;d<i.dateStatuses.length;d++){if(i.dateStatuses[d].issale==='0'&&pd(i.dateStatuses[d].date)>=today){nxt=i.dateStatuses[d].date;break;}}
+  var key=i.basket_key||i.auc_id;
+  return (avail?'':'<div style="background:#ffeaea;color:#c0392b;font-size:11px;font-weight:600;padding:5px 10px;border-bottom:1px solid #ffc5c5">🔴 ไม่มีการขายแล้ว</div>')+
+    '<div class="bitem">'+img+
+    '<div class="bitem-info">'+
+    '<div class="bitem-lamdap">ลำดับ '+i.lot+'</div>'+
+    '<div class="bitem-case">'+i.caseNo+(i.chanote?' · '+i.chanote:'')+'</div>'+
+    (i.ampur&&i.ampur!=='-'?'<div class="bitem-loc"><strong>'+i.ampur+'</strong>'+(i.tumbol&&i.tumbol!=='-'?' · <strong>'+i.tumbol+'</strong>':'')+'</div>':'')+
+    '<div class="bitem-addr">'+(i.addrno&&i.addrno!=='-'?'เลขที่ '+i.addrno+' ':'')+i.city+'</div>'+
+    '<div class="bitem-row"><div class="bitem-field"><label>ราคาประเมิน</label><p>'+fmt(i.appraisalPrice)+'</p></div><div class="bitem-field hl"><label>หลักประกัน</label><p>'+fmt(i.reserveFund)+'</p></div><div class="bitem-field"><label>นัดถัดไป</label><p>'+(nxt||'—')+'</p></div></div>'+
+    '</div><button class="bitem-rm" onclick="removeItem(\''+key+'\')" style="position:absolute;top:5px;right:5px;background:none;border:none;color:#ccc;cursor:pointer;font-size:14px">✕</button></div>';
+}
+function toggleBGroup(region){
+  var el=document.getElementById('bgroup-'+region.replace(/ /g,'_'));
+  var arrow=document.getElementById('barrow-'+region.replace(/ /g,'_'));
+  if(!el)return;
+  var hidden=el.style.display==='none';
+  el.style.display=hidden?'block':'none';
+  if(arrow)arrow.textContent=hidden?'▼':'▶';
+}
 function updateBasket(){
   var items=Object.values(basket),count=items.length;
   document.getElementById('bcnt').textContent=count;
   if(!count){document.getElementById('bpanel-items').innerHTML='<div class="bempty">ยังไม่มีรายการ<br><small>กดปุ่ม + สนใจ</small></div>';return;}
-  document.getElementById('bpanel-items').innerHTML=items.map(function(i){
-    var img=i.imageUrl?'<img src="'+i.imageUrl+'" onerror="this.outerHTML=\'<div class=bitem-noimg>ไม่มีรูป</div>\'">':'<div class="bitem-noimg">ไม่มีรูป</div>';
-    var avail=isAvailable(i);
-    var nxt='';for(var d=0;d<i.dateStatuses.length;d++){if(i.dateStatuses[d].issale==='0'&&pd(i.dateStatuses[d].date)>=today){nxt=i.dateStatuses[d].date;break;}}
-    var regionLabel=i.region_label||'';
-    return (avail?'':'<div style="background:#ffeaea;color:#c0392b;font-size:11px;font-weight:600;padding:5px 10px;border-bottom:1px solid #ffc5c5">🔴 ไม่มีการขายแล้ว</div>')+
-    '<div class="bitem">'+img+
-      '<div class="bitem-info">'+
-      (regionLabel?'<span style="background:#e8f4fd;color:#1a6fb5;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;margin-bottom:3px;display:inline-block">'+regionLabel+'</span><br>':'')+
-      '<div class="bitem-lamdap">ลำดับ '+i.lot+'</div>'+
-      '<div class="bitem-case">'+i.caseNo+(i.chanote?' · '+i.chanote:'')+'</div>'+
-      (i.ampur&&i.ampur!=='-'?'<div class="bitem-loc"><strong>'+i.ampur+'</strong>'+(i.tumbol&&i.tumbol!=='-'?' · <strong>'+i.tumbol+'</strong>':'')+'</div>':'')+
-      '<div class="bitem-addr">'+(i.addrno&&i.addrno!=='-'?'เลขที่ '+i.addrno+' ':'')+i.city+'</div>'+
-      '<div class="bitem-row"><div class="bitem-field"><label>ราคาประเมิน</label><p>'+fmt(i.appraisalPrice)+'</p></div><div class="bitem-field hl"><label>หลักประกัน</label><p>'+fmt(i.reserveFund)+'</p></div><div class="bitem-field"><label>นัดถัดไป</label><p>'+(nxt||'—')+'</p></div></div>'+
-      '</div><button class="bitem-rm" onclick="removeItem(\''+i.auc_id+'\')">✕</button></div>';
-  }).join('');
+  // Group by region_label
+  var groups={};var groupOrder=[];
+  items.forEach(function(i){
+    var rl=i.region_label||'อื่นๆ';
+    if(!groups[rl]){groups[rl]=[];groupOrder.push(rl);}
+    groups[rl].push(i);
+  });
+  var html='';
+  groupOrder.forEach(function(region){
+    var grpItems=groups[region];
+    var rid=region.replace(/ /g,'_');
+    html+='<div style="margin-bottom:8px">'+
+      '<div onclick="toggleBGroup(\''+region+'\')" style="display:flex;justify-content:space-between;align-items:center;background:#f0f8ff;border:1px solid #c8e0f4;border-radius:8px;padding:7px 12px;cursor:pointer;margin-bottom:6px">'+
+      '<span style="font-size:12px;font-weight:700;color:#1a6fb5">'+region+' <span style="background:#1a6fb5;color:#fff;border-radius:10px;padding:1px 7px;font-size:10px">'+grpItems.length+'</span></span>'+
+      '<span id="barrow-'+rid+'" style="color:#1a6fb5;font-size:11px">▼</span>'+
+      '</div>'+
+      '<div id="bgroup-'+rid+'">'+
+      grpItems.map(function(i){return renderBitem(i);}).join('')+
+      '</div>'+
+      '</div>';
+  });
+  document.getElementById('bpanel-items').innerHTML=html;
 }
 
 // ── Share URL ─────────────────────────────────────────────────
@@ -468,6 +497,13 @@ function fallbackCopy(text){
 function showReceipt(){
   var items=Object.values(basket);
   if(!items.length){alert('ยังไม่มีรายการในตะกร้า');return;}
+  // Group by region
+  var groups={};var groupOrder=[];
+  items.forEach(function(i){
+    var rl=i.region_label||'อื่นๆ';
+    if(!groups[rl]){groups[rl]=[];groupOrder.push(rl);}
+    groups[rl].push(i);
+  });
   var html='';
   // Header
   html+='<div style="text-align:center;padding:8px 0 16px">'
@@ -476,60 +512,47 @@ function showReceipt(){
     +'<div style="font-size:11px;color:#aaa;margin-top:2px">'+new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})+' · '+items.length+' รายการ</div>'
     +'</div>';
 
-  items.forEach(function(i,idx){
-    var rc2=RC[currentRegion]||{};
-    // Find remark from any region
-    var remark='';Object.keys(RC).forEach(function(reg){if(RC[reg][i.basket_key||i.auc_id])remark=RC[reg][i.basket_key||i.auc_id];});
-    var nxt='';for(var d=0;d<i.dateStatuses.length;d++){if(i.dateStatuses[d].issale==='0'&&pd(i.dateStatuses[d].date)>=today){nxt=i.dateStatuses[d].date;break;}}
-    var avail=isAvailable(i);
-    html+='<div class="receipt-card">';
-    // Photo
-    if(i.imageUrl){
-      html+='<img class="receipt-img" src="'+i.imageUrl+'" onerror="this.style.display=\'none\'">';
-    }
-    html+='<div class="receipt-body">';
-    // Region label
-    if(i.region_label){html+='<div style="margin-bottom:4px"><span style="background:#e8f4fd;color:#1a6fb5;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">'+i.region_label+'</span></div>';}
-    // Number
-    html+='<div class="receipt-num">รายการที่ '+(idx+1)+'</div>';
-    // ลำดับ
-    html+='<div class="receipt-lamdap">ลำดับ '+i.lot+'</div>';
-    // คดี + โฉนด
-    html+='<div class="receipt-case">'+i.caseNo+(i.chanote?' · '+i.landtype+' '+i.chanote:'')+'</div>';
-    html+='<hr class="receipt-divider">';
-    // Location
-    if(i.ampur&&i.ampur!=='-'){
-      html+='<div class="receipt-loc">'+i.ampur+(i.tumbol&&i.tumbol!=='-'?' · '+i.tumbol:'')+'</div>';
-    }
-    if(i.addrno&&i.addrno!=='-'){
-      html+='<div class="receipt-addr">เลขที่ '+i.addrno+(i.city?' '+i.city:'')+'</div>';
-    }
-    // Price grid
-    html+='<div class="receipt-grid">'
-      +'<div class="receipt-field"><label>ราคาประเมิน</label><p>'+fmt(i.appraisalPrice)+'</p></div>'
-      +'<div class="receipt-field hl"><label>หลักประกัน</label><p>'+fmt(i.reserveFund)+'</p></div>'
-      +'<div class="receipt-field"><label>ขนาด</label><p>'+(i.wa?i.wa+' ตร.วา':'—')+'</p></div>'
-      +'<div class="receipt-field"><label>ประเภท</label><p style="font-size:11px">'+(i.type.indexOf('ว่าง')!==-1?'ที่ดินว่างเปล่า':'บ้าน+ที่ดิน')+'</p></div>'
+  var globalIdx=0;
+  groupOrder.forEach(function(region){
+    var grpItems=groups[region];
+    // Area header
+    html+='<div style="background:#1a6fb5;color:#fff;font-size:12px;font-weight:700;padding:8px 14px;border-radius:10px;margin-bottom:8px;margin-top:4px">'
+      +region+' <span style="background:rgba(255,255,255,.25);border-radius:10px;padding:1px 8px;font-size:11px">'+grpItems.length+' รายการ</span>'
       +'</div>';
-    // Next date
-    if(nxt){
-      html+='<div class="receipt-next">▶ นัดถัดไป: '+nxt+'</div> ';
-    }
-    // Mortgage
-    if(i.mortgage){
-      html+='<div class="receipt-mortgage">⚠️ '+i.mortgage+'</div>';
-    }
-    // Remark
-    if(remark){
-      html+='<div class="receipt-remark">📝 '+remark+'</div>';
-    }
-    html+='</div></div>';
+
+    grpItems.forEach(function(i){
+      globalIdx++;
+      var remark='';Object.keys(RC).forEach(function(reg){if(RC[reg][i.basket_key||i.auc_id])remark=RC[reg][i.basket_key||i.auc_id];});
+      var nxt='';for(var d=0;d<i.dateStatuses.length;d++){if(i.dateStatuses[d].issale==='0'&&pd(i.dateStatuses[d].date)>=today){nxt=i.dateStatuses[d].date;break;}}
+      var avail=isAvailable(i);
+      html+='<div class="receipt-card">';
+      if(i.imageUrl){html+='<img class="receipt-img" src="'+i.imageUrl+'" onerror="this.style.display=\'none\'">';}
+      html+='<div class="receipt-body">';
+      html+='<div class="receipt-num">รายการที่ '+globalIdx+'</div>';
+      html+='<div class="receipt-lamdap">ลำดับ '+i.lot+'</div>';
+      html+='<div class="receipt-case">'+i.caseNo+(i.chanote?' · '+i.landtype+' '+i.chanote:'')+'</div>';
+      html+='<hr class="receipt-divider">';
+      if(i.ampur&&i.ampur!=='-'){html+='<div class="receipt-loc">'+i.ampur+(i.tumbol&&i.tumbol!=='-'?' · '+i.tumbol:'')+'</div>';}
+      if(i.addrno&&i.addrno!=='-'){html+='<div class="receipt-addr">เลขที่ '+i.addrno+(i.city?' '+i.city:'')+'</div>';}
+      html+='<div class="receipt-grid">'
+        +'<div class="receipt-field"><label>ราคาประเมิน</label><p>'+fmt(i.appraisalPrice)+'</p></div>'
+        +'<div class="receipt-field hl"><label>หลักประกัน</label><p>'+fmt(i.reserveFund)+'</p></div>'
+        +'<div class="receipt-field"><label>ขนาด</label><p>'+(function(r,n,w){var p=[];if(r>0)p.push(r+' ไร่');if(n>0)p.push(n+' งาน');if(w>0)p.push(w+' ตร.ว.');return p.length?p.join(' '):'—';})(i.rai||0,i.ngan||0,i.wa||0)+'</p></div>'
+        +'<div class="receipt-field"><label>ประเภท</label><p style="font-size:11px">'+(i.type.indexOf('ว่าง')!==-1?'ที่ดินว่างเปล่า':'บ้าน+ที่ดิน')+'</p></div>'
+        +'</div>';
+      if(!avail){html+='<div style="background:#ffeaea;color:#c0392b;font-size:11px;font-weight:600;padding:4px 8px;border-radius:8px;margin-bottom:4px;display:inline-block">🔴 ไม่มีการขายแล้ว</div> ';}
+      else if(nxt){html+='<div class="receipt-next">▶ นัดถัดไป: '+nxt+'</div> ';}
+      if(i.mortgage){html+='<div class="receipt-mortgage">⚠️ '+i.mortgage+'</div>';}
+      if(remark){html+='<div class="receipt-remark">📝 '+remark+'</div>';}
+      html+='</div></div>';
+    });
   });
 
   document.getElementById('rbox-body').innerHTML=html;
   document.getElementById('rmodal').classList.add('show');
   document.body.style.overflow='hidden';
 }
+
 function closeReceipt(){document.getElementById('rmodal').classList.remove('show');document.body.style.overflow='';}
 
 // ── CSV ───────────────────────────────────────────────────────
