@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LED Property Evaluator</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f4f0;--sf:#fff;--sf2:#efede8;--bd:#dedad3;--bd2:#bdb9b0;
+  --tx:#1c1b19;--tx2:#6b6860;--tx3:#a8a49d;
+  --ac:#1a6ef5;--ac-bg:#eef4ff;--ac-bd:#b3d0ff;
+  --star:#e8a020;--star-off:#dedad3;
+  --pri-bg:#e6f5ee;--pri-t:#1a8a4a;
+  --int-bg:#eef4ff;--int-t:#1a6ef5;
+  --wat-bg:#fef3e2;--wat-t:#b45309;
+  --pas-bg:#efede8;--pas-t:#6b6860;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#17161a;--sf:#222027;--sf2:#2a2830;--bd:#38353f;--bd2:#524e5c;
+  --tx:#edebe6;--tx2:#9e9aa6;--tx3:#67636e;
+  --ac:#5b9bff;--ac-bg:#1a2540;--ac-bd:#2a4070;
+  --star:#f5a623;--star-off:#38353f;
+  --pri-bg:#102a1e;--pri-t:#4abe7a;
+  --int-bg:#1a2540;--int-t:#5b9bff;
+  --wat-bg:#2a1d08;--wat-t:#f5a623;
+  --pas-bg:#2a2830;--pas-t:#9e9aa6;
+}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px}
+
+.hdr{background:var(--sf);border-bottom:1px solid var(--bd);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:30}
+.hdr h1{font-size:15px;font-weight:600;flex:1}
+.hdr-sub{font-size:11px;color:var(--tx2);margin-top:1px}
+.back{font-size:12px;color:var(--ac);text-decoration:none;padding:5px 10px;border:1px solid var(--bd);border-radius:7px}
+.back:hover{background:var(--sf2)}
+
+.paste-wrap{background:var(--sf);border-bottom:1px solid var(--bd);padding:10px 16px}
+.paste-row{display:flex;gap:8px;align-items:center}
+.paste-row input{flex:1;font-size:12px;font-family:monospace;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--sf2);color:var(--tx);outline:none;min-width:0}
+.paste-row input:focus{border-color:var(--ac)}
+.lbtn{padding:8px 16px;font-size:13px;font-weight:500;background:var(--ac);color:#fff;border:none;border-radius:8px;cursor:pointer;flex-shrink:0}
+.lbtn:hover{opacity:.9}.lbtn:disabled{opacity:.4;cursor:not-allowed}
+.hint{font-size:11px;color:var(--tx3);margin-top:6px}
+
+main{padding:14px 16px;max-width:1200px;margin:0 auto}
+
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
+.stat-l{font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.stat-v{font-size:18px;font-weight:600}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.toolbar input,.toolbar select{font-size:13px;padding:6px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--sf);color:var(--tx);outline:none}
+.toolbar input{flex:1;min-width:140px}
+.toolbar input:focus,.toolbar select:focus{border-color:var(--ac)}
+.tbtn{font-size:12px;padding:6px 11px;border:1px solid var(--bd);border-radius:8px;background:var(--sf);color:var(--tx);cursor:pointer;white-space:nowrap}
+.tbtn:hover{background:var(--sf2)}
+.tbtn.active{background:var(--ac-bg);color:var(--ac);border-color:var(--ac-bd)}
+.share-btn{background:var(--ac-bg)!important;color:var(--ac)!important;border-color:var(--ac-bd)!important}
+
+.area-hdr{display:flex;align-items:center;gap:8px;margin:16px 0 10px}
+.area-lbl{font-size:13px;font-weight:600;color:var(--tx2)}
+.area-cnt{font-size:11px;color:var(--tx3);background:var(--sf2);padding:2px 8px;border-radius:20px}
+.area-hbtn{font-size:11px;color:var(--ac);cursor:pointer;margin-left:auto;padding:3px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--sf)}
+.area-hbtn:hover{background:var(--ac-bg)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:14px}
+
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .15s;position:relative}
+.card:hover{box-shadow:0 2px 14px rgba(0,0,0,.09)}
+.card.deleted{opacity:.35}
+.card.pri{border-top:3px solid var(--pri-t)}
+.card.int{border-top:3px solid var(--int-t)}
+.card.wat{border-top:3px solid var(--wat-t)}
+
+.del-btn{position:absolute;top:7px;right:7px;z-index:5;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.del-btn:hover{background:rgba(192,57,43,.9)}
+
+/* photo + map */
+.card-media{position:relative;height:180px;background:var(--sf2);overflow:hidden;flex-shrink:0}
+.card-img{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer}
+.no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--tx3);font-size:12px;flex-direction:column;gap:4px}
+.map-btn{position:absolute;bottom:6px;left:6px;font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;z-index:4}
+.map-btn:hover{background:rgba(0,0,0,.8)}
+.map-frame{position:absolute;inset:0;z-index:3;background:var(--sf2);display:none}
+.map-frame iframe{width:100%;height:100%;border:none}
+
+.rgn-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--sf2);color:var(--tx2);border:1px solid var(--bd);white-space:nowrap}
+.card-body{padding:11px 13px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card-addr{font-size:13px;font-weight:500;line-height:1.4}
+.card-meta{font-size:11px;color:var(--tx3);margin-top:2px}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px}
+.mi{font-size:12px;color:var(--tx2)}
+.mi strong{color:var(--tx);font-weight:500}
+.price{font-size:15px;font-weight:700;color:var(--ac)}
+
+.stars{display:flex;gap:1px}
+.star{font-size:20px;cursor:pointer;color:var(--star-off);line-height:1;user-select:none}
+.star.on{color:var(--star)}
+.star:hover{color:var(--star)}
+
+.sel{font-size:12px;padding:5px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--sf);color:var(--tx);cursor:pointer;width:100%}
+
+.badge{font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;display:inline-block;white-space:nowrap}
+.b-pri{background:var(--pri-bg);color:var(--pri-t)}
+.b-int{background:var(--int-bg);color:var(--int-t)}
+.b-wat{background:var(--wat-bg);color:var(--wat-t)}
+.b-pas{background:var(--pas-bg);color:var(--pas-t)}
+
+.ev-sec{border-top:1px solid var(--bd);padding-top:8px;display:flex;flex-direction:column;gap:7px}
+.ev-lbl{font-size:11px;font-weight:500;color:var(--tx2);margin-bottom:2px;display:block}
+.ev-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ev-in{width:100%;font-size:12px;padding:5px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--sf2);color:var(--tx);outline:none;font-family:inherit}
+.ev-in:focus{border-color:var(--ac)}
+.ev-in::placeholder{color:var(--tx3)}
+textarea.ev-in{resize:vertical;min-height:50px;line-height:1.4}
+
+.tog-row{display:flex;gap:4px}
+.tog{flex:1;font-size:11px;padding:4px 0;border:1px solid var(--bd);border-radius:6px;background:var(--sf);color:var(--tx2);cursor:pointer;text-align:center}
+.tog.on-green{border-color:var(--pri-t);background:var(--pri-bg);color:var(--pri-t);font-weight:500}
+.tog.on-amber{border-color:var(--wat-t);background:var(--wat-bg);color:var(--wat-t);font-weight:500}
+.tog.on-gray{border-color:var(--bd2);background:var(--sf2);color:var(--tx);font-weight:500}
+.tog.on-blue{border-color:var(--ac);background:var(--ac-bg);color:var(--ac);font-weight:500}
+
+.clinks{display:flex;gap:6px;flex-wrap:wrap}
+.clink{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--ac);text-decoration:none;padding:4px 8px;border:1px solid var(--ac-bd);border-radius:6px;cursor:pointer;background:none}
+.clink:hover{background:var(--ac-bg)}
+
+.center-msg{text-align:center;padding:60px 20px;color:var(--tx2)}
+.spin{width:36px;height:36px;border:3px solid var(--bd);border-top-color:var(--ac);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* modal */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:16px}
+.overlay.open{display:flex}
+.modal{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.modal h2{font-size:15px;margin-bottom:12px}
+.share-block{border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:12px}
+.share-block h3{font-size:13px;font-weight:600;margin-bottom:4px}
+.share-block p{font-size:12px;color:var(--tx2);margin-bottom:8px;line-height:1.5}
+.share-block textarea{width:100%;height:56px;font-size:11px;font-family:monospace;border:1px solid var(--bd);border-radius:7px;background:var(--sf2);color:var(--tx);padding:7px;resize:none;margin-bottom:8px}
+.copy-btn{font-size:12px;padding:6px 14px;border-radius:7px;cursor:pointer;border:1px solid var(--ac);background:var(--ac);color:#fff;display:block;width:100%;text-align:center}
+.copy-btn:hover{opacity:.9}
+.close-btn{font-size:12px;padding:6px 14px;border-radius:7px;cursor:pointer;border:1px solid var(--bd2);background:var(--sf2);color:var(--tx);display:block;width:100%;text-align:center;margin-top:4px}
+
+.footer{margin-top:12px;font-size:11px;color:var(--tx3);text-align:center}
+
+/* table */
+.twrap{background:var(--sf);border:1px solid var(--bd);border-radius:10px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{padding:8px 10px;text-align:left;font-size:10px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bd);background:var(--sf2);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--bd)}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--sf2)}
+td{padding:7px 10px;vertical-align:middle}
+.sm{font-size:11px;color:var(--tx2)}
+.thumb{width:52px;height:40px;object-fit:cover;border-radius:5px;display:block;background:var(--sf2)}
+.ntd{font-size:12px;outline:none;background:transparent;border:none;color:var(--tx);font-family:inherit;width:110px}
+.ntd::placeholder{color:var(--tx3)}
+
+/* lightbox */
+.lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;align-items:center;justify-content:center}
+.lb.open{display:flex}
+.lb img{max-width:90vw;max-height:90vh;border-radius:8px;object-fit:contain}
+.lb-x{position:fixed;top:16px;right:20px;color:#fff;font-size:28px;cursor:pointer;z-index:201;background:none;border:none}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div style="flex:1">
+    <h1>🏠 LED Property Evaluator</h1>
+    <div class="hdr-sub" id="hdr-sub">วางลิงก์ basket จาก LED Tracker เพื่อเริ่มต้น</div>
+  </div>
+  <a class="back" href="index.html">← Dashboard</a>
+</div>
+
+<div class="paste-wrap">
+  <div class="paste-row">
+    <input id="uin" type="text" placeholder="วาง URL: https://orangemangosteen.github.io/led-tracker/#b=…" oninput="autoLoad(this.value)">
+    <button class="lbtn" id="lbtn" onclick="doLoad()">Load</button>
+  </div>
+  <div class="hint" id="hint">วาง URL เต็มจาก LED Tracker (รวม #b=…) แล้วกด Load</div>
+</div>
+
+<main id="main" style="display:none">
+  <div class="stats" id="stats"></div>
+  <div class="toolbar">
+    <input id="srch" placeholder="ค้นหาที่อยู่, โน้ต, โฉนด…" oninput="render()">
+    <select id="sf" onchange="render()">
+      <option value="">ทุก status</option>
+      <option value="priority">Priority</option>
+      <option value="interested">Interested</option>
+      <option value="watch">Watching</option>
+      <option value="pass">Pass</option>
+      <option value="none">ยังไม่ประเมิน</option>
+    </select>
+    <select id="rf" onchange="render()">
+      <option value="">ทุก rating</option>
+      <option value="5">5 ★</option><option value="4">4+ ★</option><option value="3">3+ ★</option>
+      <option value="1">มี rating</option><option value="0">ยังไม่ rating</option>
+    </select>
+    <select id="af" onchange="render()"><option value="">ทุกพื้นที่</option></select>
+    <select id="delf" onchange="render()">
+      <option value="active">Active เท่านั้น</option>
+      <option value="all">ทั้งหมด (รวม deleted)</option>
+      <option value="deleted">Deleted เท่านั้น</option>
+    </select>
+    <button class="tbtn active" id="btn-grid" onclick="setView('grid')">⊞ Cards</button>
+    <button class="tbtn" id="btn-table" onclick="setView('table')">☰ Table</button>
+    <button class="tbtn share-btn" onclick="showShare()">📋 Share</button>
+    <button class="tbtn" onclick="doExport()">⬇ CSV</button>
+  </div>
+  <div id="content"></div>
+  <div class="footer" id="foot"></div>
+</main>
+
+<div id="loading" style="display:none" class="center-msg">
+  <div class="spin"></div>กำลังโหลดข้อมูลจาก index.html…
+</div>
+
+<!-- SHARE MODAL -->
+<div class="overlay" id="ovl">
+  <div class="modal">
+    <h2>📋 Share / บันทึกการประเมิน</h2>
+
+    <div class="share-block">
+      <h3>🔗 Your full link</h3>
+      <p>รวมทุก property รวม deleted — ใช้สำหรับตัวเองหรือ backup<br>
+      <strong>deleted ยังอยู่ใน link นี้</strong> แต่จะโชว์เป็นสีจางๆ เมื่อเปิด</p>
+      <textarea id="sh-full" readonly></textarea>
+      <button class="copy-btn" id="cp-full" onclick="copyTA('sh-full','cp-full')">Copy full link</button>
+    </div>
+
+    <div class="share-block">
+      <h3>👷 Helper link (ส่งให้ helper)</h3>
+      <p>ไม่รวม property ที่กด ✕ ออก — helper จะเห็นแค่รายการที่คุณอนุมัติแล้ว<br>
+      <strong>ถ้าคุณ delete แล้วกด Share → Helper link จะไม่มีรายการนั้น</strong></p>
+      <textarea id="sh-help" readonly></textarea>
+      <button class="copy-btn" id="cp-help" onclick="copyTA('sh-help','cp-help')">Copy helper link</button>
+    </div>
+
+    <button class="close-btn" onclick="closeModal()">ปิด</button>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb" onclick="closeLb()">
+  <button class="lb-x" onclick="closeLb()">✕</button>
+  <img id="lb-img" src="" alt="property photo">
+</div>
+
+<script>
+/* ── state ─────────────────────────────────────────────────────────── */
+let PROPS = [];
+let ES = {};
+let BASKET = '';
+let VIEW = 'grid';
+let JCACHE = null;
+
+const SM = {
+  priority: {l:'Priority', cls:'b-pri', cc:'pri'},
+  interested: {l:'Interested', cls:'b-int', cc:'int'},
+  watch: {l:'Watching', cls:'b-wat', cc:'wat'},
+  pass: {l:'Pass', cls:'b-pas', cc:'pas'},
+};
+
+/* ── localStorage ───────────────────────────────────────────────────── */
+function sk() { return 'led_ev4_' + BASKET.slice(0, 60).replace(/\W/g, '_'); }
+function loadES(bStr) {
+  const h = window.location.hash.slice(1), p = new URLSearchParams(h), e = p.get('e');
+  if (e) { try { return JSON.parse(decodeURIComponent(atob(e))); } catch(_) {} }
+  try { const s = localStorage.getItem('led_ev4_' + bStr.slice(0, 60).replace(/\W/g, '_')); if (s) return JSON.parse(s); } catch(_) {}
+  return {};
+}
+function saveES() { try { localStorage.setItem(sk(), JSON.stringify(ES)); } catch(_) {} }
+function gE(k) {
+  return ES[k] || { stars:0, status:'none', notes:'', mSell:'', mRent:'', pros:'', cons:'', comm:'', uSell:'', uRent:'', road:'', deleted:false };
+}
+function sE(k, o) { ES[k] = { ...gE(k), ...o }; saveES(); renderStats(); }
+
+/* ── parse basket from URL string ───────────────────────────────────── */
+function parseBasket(raw) {
+  raw = (raw || '').trim();
+  const hi = raw.indexOf('#'); if (hi === -1) return null;
+  const p = new URLSearchParams(raw.slice(hi + 1));
+  const b = p.get('b'); if (!b) return null;
+  return b.split(',').filter(Boolean).map(s => {
+    const parts = s.split('_');
+    // basket_key = auc_id + '_' + chanote
+    // auc_id is the first part, chanote is the rest (chanote can contain underscores? unlikely but safe)
+    const auc_id = parts[0];
+    const chanote = parts.slice(1).join('_');
+    return { key: s, auc_id, chanote };
+  });
+}
+
+function autoLoad(v) { if (v.includes('b=')) doLoad(); }
+
+/* ── fetch ALLDATA from index.html ──────────────────────────────────── */
+async function fetchAllData() {
+  if (JCACHE) return JCACHE;
+
+  // Build base URL — works on GitHub Pages and local server
+  // e.g. https://orangemangosteen.github.io/led-tracker/eval.html → base = .../led-tracker/
+  const base = window.location.href.replace(/\/eval\.html([^/]*)$/, '/').replace(/#.*/, '');
+  const r = await fetch(base + 'index.html');
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const txt = await r.text();
+
+  // The scraper injects: var ALLDATA={...}; where ALLDATA is an object keyed by region name
+  // Each region value is an array of property objects
+  const m = txt.match(/var\s+ALLDATA\s*=\s*(\{[\s\S]*?\})\s*;/);
+  if (m) {
+    try {
+      const obj = JSON.parse(m[1]);
+      // flatten into single array, injecting region key as field
+      const flat = [];
+      Object.entries(obj).forEach(([regionKey, arr]) => {
+        if (Array.isArray(arr)) arr.forEach(item => flat.push({ _regionKey: regionKey, ...item }));
+      });
+      if (flat.length) { JCACHE = flat; return flat; }
+    } catch(e) { console.warn('ALLDATA parse failed:', e); }
+  }
+
+  // fallback: try flat array patterns
+  const pats = [
+    /(?:const|var|let)\s+(?:allData|DATA|properties|PROPS)\s*=\s*(\[[\s\S]*?\])\s*;/,
+    /window\._allData\s*=\s*(\[[\s\S]*?\])\s*;/,
+  ];
+  for (const re of pats) {
+    const m2 = txt.match(re);
+    if (!m2) continue;
+    try {
+      const d = JSON.parse(m2[1]);
+      if (Array.isArray(d) && d.length) { JCACHE = d; return d; }
+    } catch(_) {}
+  }
+
+  console.warn('Could not extract JSON from index.html');
+  return null;
+}
+
+/* ── main load ──────────────────────────────────────────────────────── */
+async function doLoad() {
+  const raw = document.getElementById('uin').value.trim();
+  if (!raw) return;
+  const basket = parseBasket(raw);
+  if (!basket || !basket.length) {
+    document.getElementById('hint').innerHTML = '<span style="color:#c0392b">⚠️ ไม่พบ #b= basket — วาง URL เต็มจาก LED Tracker</span>';
+    return;
+  }
+
+  document.getElementById('hint').style.display = 'none';
+  document.getElementById('main').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('lbtn').disabled = true;
+
+  BASKET = basket.map(b => b.key).join(',');
+  ES = loadES(BASKET);
+
+  let all = null;
+  try { all = await fetchAllData(); } catch(e) { console.warn('fetch failed:', e); }
+
+  // Match basket items to full property data
+  // basket_key in index.html = auc_id + '_' + chanote
+  // We match by basket_key field first, then by auc_id + chanote separately
+  PROPS = basket.map(b => {
+    let f = null;
+    if (all) {
+      // Primary: match basket_key field exactly
+      f = all.find(p => p.basket_key === b.key);
+      // Fallback: match auc_id and chanote separately
+      if (!f) f = all.find(p => String(p.auc_id) === String(b.auc_id) && String(p.chanote) === String(b.chanote));
+      // Fallback: just auc_id
+      if (!f) f = all.find(p => String(p.auc_id) === String(b.auc_id));
+    }
+    return { key: b.key, auc_id: b.auc_id, chanote: b.chanote, ...(f || {}) };
+  });
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('main').style.display = 'block';
+  document.getElementById('lbtn').disabled = false;
+
+  const enriched = PROPS.filter(p => p.address || p.addr).length;
+  document.getElementById('hdr-sub').textContent =
+    `${PROPS.length} รายการ · ${enriched} มีข้อมูล · กรมบังคับคดี`;
+
+  // Area filter
+  const areas = [...new Set(PROPS.map(p => gRgn(p)).filter(Boolean))];
+  const af = document.getElementById('af');
+  af.innerHTML = '<option value="">ทุกพื้นที่</option>';
+  areas.forEach(a => { const o = document.createElement('option'); o.value = a; o.textContent = a; af.appendChild(o); });
+
+  renderStats();
+  render();
+}
+
+/* ── field helpers ──────────────────────────────────────────────────── */
+function gAddr(p) { return p.address || p.addr || p.asset_address || p.location || ''; }
+function gPrice(p) {
+  const raw = p.appraisalPrice || p.price || p.start_price || 0;
+  if (!raw) return 0;
+  const n = parseFloat(String(raw).replace(/,/g, ''));
+  return isNaN(n) ? 0 : n;
+}
+function fmtP(n) {
+  if (!n) return '—';
+  if (n >= 1e6) return '฿' + (n / 1e6).toFixed(2) + 'M';
+  if (n >= 1e3) return '฿' + Math.round(n / 1e3) + 'K';
+  return '฿' + n.toLocaleString();
+}
+
+// Images: LED site blocks hotlinking from external domains.
+// We use a Google image proxy trick: https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&url=ENCODED_URL
+// This proxies the LED image through Google's servers, bypassing the referer block.
+function proxyImg(url) {
+  if (!url) return '';
+  if (url.startsWith('data:')) return url; // already embedded
+  return 'https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&url=' + encodeURIComponent(url);
+}
+
+function gPhoto(p) {
+  const raw = p.imageUrl || p.image || p.img || p.img_url || p.image_url || p.thumbnail || '';
+  return raw ? proxyImg(raw) : '';
+}
+function gPhotoRaw(p) { return p.imageUrl || p.image || p.img || p.img_url || p.image_url || p.thumbnail || ''; }
+
+function gDate(p) {
+  if (p.dates && Array.isArray(p.dates) && p.dates.length) return p.dates[0];
+  return p.auction_date || p.next_auction || p.date || '';
+}
+function gType(p) { return p.type || p.asset_type || p.property_type || ''; }
+function gArea(p) { return p.wa ? (p.wa + ' ตร.ว.') : (p.area || p.rai || p.size || ''); }
+function gRgn(p) { return p.region_label || p.area_label || p.region || p._regionKey || ''; }
+function gAmpur(p) { return p.ampur || p.amphoe || ''; }
+function gTumbol(p) { return p.tumbol || ''; }
+
+function ledUrl(p) {
+  return `https://asset.led.go.th/newbidreg/asset_open.asp?Law_Court_ID=${p.auc_id}&deed_no=${p.chanote}`;
+}
+function mapsUrl(p) {
+  return 'https://www.google.com/maps?q=' + encodeURIComponent(gAddr(p));
+}
+function mapsEmbed(p) {
+  return 'https://www.google.com/maps?q=' + encodeURIComponent(gAddr(p)) + '&output=embed';
+}
+
+/* ── stats ──────────────────────────────────────────────────────────── */
+function renderStats() {
+  let rated = 0, pri = 0, int_ = 0, del_ = 0, tot = 0, sc = 0;
+  PROPS.forEach(p => {
+    const e = gE(p.key);
+    if (e.stars > 0) { rated++; tot += e.stars; sc++; }
+    if (e.status === 'priority') pri++;
+    if (e.status === 'interested') int_++;
+    if (e.deleted) del_++;
+  });
+  const avg = sc > 0 ? (tot / sc).toFixed(1) + ' ★' : '—';
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="stat-l">รวม</div><div class="stat-v">${PROPS.length}</div></div>
+    <div class="stat"><div class="stat-l">Active</div><div class="stat-v">${PROPS.length - del_}</div></div>
+    <div class="stat"><div class="stat-l">Priority</div><div class="stat-v">${pri}</div></div>
+    <div class="stat"><div class="stat-l">Interested</div><div class="stat-v">${int_}</div></div>
+    <div class="stat"><div class="stat-l">Avg ★</div><div class="stat-v">${avg}</div></div>`;
+}
+
+/* ── filter ─────────────────────────────────────────────────────────── */
+function filtered() {
+  const s = (document.getElementById('srch').value || '').toLowerCase();
+  const sf = document.getElementById('sf').value;
+  const rf = document.getElementById('rf').value;
+  const af = document.getElementById('af').value;
+  const df = document.getElementById('delf').value;
+  return PROPS.filter(p => {
+    const e = gE(p.key), st = e.status || 'none', stars = e.stars || 0;
+    if (df === 'active' && e.deleted) return false;
+    if (df === 'deleted' && !e.deleted) return false;
+    if (sf) { if (sf === 'none' ? st !== 'none' : st !== sf) return false; }
+    if (rf) {
+      if (rf === '0' && stars > 0) return false;
+      if (rf === '1' && stars === 0) return false;
+      if (parseInt(rf) > 1 && stars < parseInt(rf)) return false;
+    }
+    if (af && gRgn(p) !== af) return false;
+    if (s) {
+      const hay = [p.key, gAddr(p), gType(p), gRgn(p), e.notes || '', e.pros || '', e.cons || '', p.auc_id, p.chanote].join(' ').toLowerCase();
+      if (!hay.includes(s)) return false;
+    }
+    return true;
+  });
+}
+
+/* ── render ─────────────────────────────────────────────────────────── */
+function render() {
+  const rows = filtered();
+  document.getElementById('foot').textContent = `แสดง ${rows.length} จาก ${PROPS.length} รายการ`;
+  if (VIEW === 'grid') renderGrid(rows); else renderTable(rows);
+}
+
+function renderGrid(rows) {
+  const regions = [...new Set(rows.map(p => gRgn(p) || '(ไม่ระบุพื้นที่)'))];
+  const ca = document.getElementById('content');
+  ca.innerHTML = '';
+  regions.forEach(region => {
+    const group = rows.filter(p => (gRgn(p) || '(ไม่ระบุพื้นที่)') === region);
+    const sec = document.createElement('div');
+    sec.innerHTML = `
+      <div class="area-hdr">
+        <span class="area-lbl">📍 ${region}</span>
+        <span class="area-cnt">${group.length} รายการ</span>
+        <button class="area-hbtn" id="ahbtn-${eid(region)}" onclick="toggleArea('${eid(region)}')">ซ่อน</button>
+      </div>
+      <div class="grid" id="ag-${eid(region)}">${group.map(p => cardHTML(p)).join('')}</div>`;
+    ca.appendChild(sec);
+  });
+}
+
+function eid(s) { return s.replace(/[^a-zA-Z0-9]/g, '_'); }
+
+function cardHTML(p) {
+  const e = gE(p.key), st = e.status || 'none', sm = SM[st];
+  const del_ = e.deleted || false;
+  const photo = gPhoto(p);
+  const rawPhoto = gPhotoRaw(p);
+  const rgn = gRgn(p);
+
+  const stars = [1,2,3,4,5].map(n =>
+    `<span class="star${(e.stars||0) >= n ? ' on' : ''}" onclick="starClick('${p.key}',${n})">★</span>`
+  ).join('');
+
+  const photoEl = photo
+    ? `<img class="card-img" src="${photo}" onclick="openLb('${photo}')" loading="lazy"
+         onerror="this.parentElement.innerHTML='<div class=no-img>📷<br>ไม่มีรูป</div>'">`
+    : `<div class="no-img">📷<br>ไม่มีรูป</div>`;
+
+  const hasAddr = !!gAddr(p);
+  const mapBtnHtml = hasAddr ? `<button class="map-btn" onclick="toggleMap(event,'${p.key}')">🗺 แผนที่</button>` : '';
+  const mapFrameHtml = hasAddr
+    ? `<div class="map-frame" id="mf-${p.key}"><iframe src="" data-src="${mapsEmbed(p)}" loading="lazy"></iframe></div>`
+    : '';
+
+  const togCls = (field, val, colorOn) => e[field] === val ? 'on-' + colorOn : '';
+
+  return `<div class="card${sm ? ' ' + sm.cc : ''}${del_ ? ' deleted' : ''}" id="c-${p.key}">
+    <button class="del-btn" onclick="toggleDel('${p.key}')" title="${del_ ? 'กู้คืน' : 'ลบออก'}">${del_ ? '↩' : '✕'}</button>
+    <div class="card-media">
+      ${photoEl}
+      ${mapBtnHtml}
+      ${mapFrameHtml}
+    </div>
+    <div class="card-body">
+      <div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:4px">
+          <div class="card-addr">${gAddr(p) || 'ไม่มีที่อยู่'}</div>
+          ${rgn ? `<span class="rgn-badge">${rgn}</span>` : ''}
+        </div>
+        <div class="card-meta">${[gAmpur(p), gTumbol(p)].filter(Boolean).join(' · ')}</div>
+        <div class="card-meta" style="margin-top:1px">${p.auc_id} / ${p.chanote}</div>
+      </div>
+
+      <div class="mg">
+        <div class="mi">ราคาตั้ง<br><strong class="price">${fmtP(gPrice(p))}</strong></div>
+        <div class="mi">ประเภท<br><strong>${gType(p) || '—'}</strong></div>
+        <div class="mi">เนื้อที่<br><strong>${gArea(p) || '—'}</strong></div>
+        <div class="mi">นัดขาย<br><strong>${gDate(p) || '—'}</strong></div>
+      </div>
+
+      <div class="stars">${stars}</div>
+      ${sm ? `<div><span class="badge ${sm.cls}">${sm.l}</span></div>` : ''}
+
+      <select class="sel" onchange="statusClick('${p.key}',this.value)">
+        <option value="none"  ${st==='none'     ?'selected':''}>— ยังไม่ประเมิน</option>
+        <option value="priority"  ${st==='priority'  ?'selected':''}>🔴 Priority</option>
+        <option value="interested"${st==='interested'?'selected':''}>🔵 Interested</option>
+        <option value="watch"     ${st==='watch'     ?'selected':''}>🟡 Watching</option>
+        <option value="pass"      ${st==='pass'      ?'selected':''}>⚫ Pass</option>
+      </select>
+
+      <div class="ev-sec">
+        <div class="ev-row">
+          <div>
+            <span class="ev-lbl">💰 ราคาตลาด ขาย</span>
+            <input class="ev-in" type="text" placeholder="฿/ตร.ว." value="${e.mSell||''}"
+              oninput="fi('${p.key}','mSell',this.value)">
+          </div>
+          <div>
+            <span class="ev-lbl">🏠 ราคาตลาด เช่า</span>
+            <input class="ev-in" type="text" placeholder="฿/เดือน" value="${e.mRent||''}"
+              oninput="fi('${p.key}','mRent',this.value)">
+          </div>
+        </div>
+
+        <div>
+          <span class="ev-lbl">✅ จุดเด่น</span>
+          <textarea class="ev-in" placeholder="ใกล้ BTS, ถนนใหญ่, ทำเลดี…"
+            oninput="fi('${p.key}','pros',this.value)">${e.pros||''}</textarea>
+        </div>
+        <div>
+          <span class="ev-lbl">⚠️ จุดด้อย</span>
+          <textarea class="ev-in" placeholder="ซอยแคบ, ใต้ทางด่วน…"
+            oninput="fi('${p.key}','cons',this.value)">${e.cons||''}</textarea>
+        </div>
+
+        <div>
+          <span class="ev-lbl">👥 ความเป็นชุมชน</span>
+          <div class="tog-row">
+            <button class="tog ${togCls('comm','ดีมาก','green')}"   onclick="tog('${p.key}','comm','ดีมาก')">ดีมาก</button>
+            <button class="tog ${togCls('comm','ปานกลาง','amber')}" onclick="tog('${p.key}','comm','ปานกลาง')">ปานกลาง</button>
+            <button class="tog ${togCls('comm','น้อย','gray')}"     onclick="tog('${p.key}','comm','น้อย')">น้อย</button>
+          </div>
+        </div>
+
+        <div class="ev-row">
+          <div>
+            <span class="ev-lbl">📦 ขาย โดยรอบ</span>
+            <input class="ev-in" type="text" placeholder="เช่น 5 ยูนิต" value="${e.uSell||''}"
+              oninput="fi('${p.key}','uSell',this.value)">
+          </div>
+          <div>
+            <span class="ev-lbl">🔑 เช่า โดยรอบ</span>
+            <input class="ev-in" type="text" placeholder="เช่น 3 ยูนิต" value="${e.uRent||''}"
+              oninput="fi('${p.key}','uRent',this.value)">
+          </div>
+        </div>
+
+        <div>
+          <span class="ev-lbl">🛣 ความกว้างถนน</span>
+          <div class="tog-row">
+            <button class="tog ${togCls('road','กว้าง','green')}"     onclick="tog('${p.key}','road','กว้าง')">กว้าง</button>
+            <button class="tog ${togCls('road','ปานกลาง','amber')}"   onclick="tog('${p.key}','road','ปานกลาง')">ปานกลาง</button>
+            <button class="tog ${togCls('road','แคบ','gray')}"        onclick="tog('${p.key}','road','แคบ')">แคบ</button>
+          </div>
+        </div>
+
+        <div>
+          <span class="ev-lbl">📝 หมายเหตุ</span>
+          <textarea class="ev-in" placeholder="โน้ตอื่นๆ…"
+            oninput="fi('${p.key}','notes',this.value)">${e.notes||''}</textarea>
+        </div>
+      </div>
+
+      <div class="clinks">
+        <a class="clink" href="${ledUrl(p)}" target="_blank" rel="noopener">↗ LED</a>
+        ${hasAddr ? `<a class="clink" href="${mapsUrl(p)}" target="_blank" rel="noopener">📍 Maps</a>` : ''}
+        ${rawPhoto ? `<button class="clink" onclick="openLb('${gPhoto(p)}')">🔍 รูปเต็ม</button>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderTable(rows) {
+  document.getElementById('content').innerHTML = `<div class="twrap"><table>
+    <thead><tr>
+      <th>#</th><th>รูป</th><th>ที่อยู่</th><th>พื้นที่</th><th>ราคา</th>
+      <th>ประเภท</th><th>ขนาด</th><th>นัด</th><th>★</th><th>Status</th>
+      <th>ตลาดขาย</th><th>ตลาดเช่า</th><th>ถนน</th><th>ชุมชน</th><th>หมายเหตุ</th><th></th>
+    </tr></thead>
+    <tbody>${rows.map((p, i) => {
+      const e = gE(p.key), st = e.status || 'none', sm = SM[st];
+      const photo = gPhoto(p);
+      const stars = [1,2,3,4,5].map(n =>
+        `<span class="star${(e.stars||0)>=n?' on':''}" onclick="starClick('${p.key}',${n})" style="font-size:15px">★</span>`
+      ).join('');
+      return `<tr style="${e.deleted?'opacity:.35':''}">
+        <td class="sm">${i + 1}</td>
+        <td>${photo ? `<img class="thumb" src="${photo}" loading="lazy" onerror="this.style.display='none'">` : '—'}</td>
+        <td style="max-width:160px;font-size:12px">${gAddr(p)||'—'}<br><span class="sm">${p.auc_id}/${p.chanote}</span></td>
+        <td class="sm">${gRgn(p)||'—'}</td>
+        <td style="white-space:nowrap;font-weight:600">${fmtP(gPrice(p))}</td>
+        <td class="sm">${gType(p)||'—'}</td>
+        <td class="sm">${gArea(p)||'—'}</td>
+        <td class="sm">${gDate(p)||'—'}</td>
+        <td><div style="display:flex;gap:1px">${stars}</div></td>
+        <td>${sm ? `<span class="badge ${sm.cls}">${sm.l}</span>` : ''}</td>
+        <td class="sm">${e.mSell||'—'}</td>
+        <td class="sm">${e.mRent||'—'}</td>
+        <td class="sm">${e.road||'—'}</td>
+        <td class="sm">${e.comm||'—'}</td>
+        <td><input class="ntd" type="text" placeholder="Notes…"
+          value="${(e.notes||'').replace(/"/g,'&quot;')}"
+          oninput="fi('${p.key}','notes',this.value)"></td>
+        <td><a class="clink" style="font-size:10px;padding:3px 6px" href="${ledUrl(p)}" target="_blank">LED</a></td>
+      </tr>`;
+    }).join('')}</tbody></table></div>`;
+}
+
+/* ── actions ────────────────────────────────────────────────────────── */
+function fi(k, f, v) { ES[k] = { ...gE(k), [f]: v }; saveES(); }
+function starClick(k, n) { const c = gE(k).stars || 0; sE(k, { stars: c === n ? 0 : n }); render(); }
+function statusClick(k, v) { sE(k, { status: v }); render(); }
+function tog(k, field, val) { const c = gE(k)[field]; sE(k, { [field]: c === val ? '' : val }); render(); }
+function toggleDel(k) { sE(k, { deleted: !gE(k).deleted }); render(); }
+
+function toggleArea(eidVal) {
+  const g = document.getElementById('ag-' + eidVal);
+  const b = document.getElementById('ahbtn-' + eidVal);
+  if (!g) return;
+  const hidden = g.style.display === 'none';
+  g.style.display = hidden ? '' : 'none';
+  if (b) b.textContent = hidden ? 'ซ่อน' : 'แสดง';
+}
+
+function toggleMap(evt, key) {
+  evt.stopPropagation();
+  const f = document.getElementById('mf-' + key);
+  if (!f) return;
+  const showing = f.style.display === 'block';
+  if (!showing) {
+    const ifr = f.querySelector('iframe');
+    if (ifr && !ifr.src && ifr.dataset.src) ifr.src = ifr.dataset.src;
+    f.style.display = 'block';
+    evt.target.textContent = '✕ ปิดแผนที่';
+  } else {
+    f.style.display = 'none';
+    evt.target.textContent = '🗺 แผนที่';
+  }
+}
+
+function setView(v) {
+  VIEW = v;
+  document.getElementById('btn-grid').className = 'tbtn' + (v === 'grid' ? ' active' : '');
+  document.getElementById('btn-table').className = 'tbtn' + (v === 'table' ? ' active' : '');
+  render();
+}
+
+/* ── lightbox ───────────────────────────────────────────────────────── */
+function openLb(src) { document.getElementById('lb-img').src = src; document.getElementById('lb').classList.add('open'); }
+function closeLb() { document.getElementById('lb').classList.remove('open'); }
+
+/* ── share — builds proper https URL ────────────────────────────────── */
+function buildUrl(bStr, state) {
+  // Always use the GitHub Pages origin, not file://
+  // Base = same path as eval.html but on the real host
+  const base = window.location.origin + window.location.pathname; // .../eval.html
+  const p = new URLSearchParams();
+  p.set('b', bStr);
+  p.set('e', btoa(encodeURIComponent(JSON.stringify(state))));
+  return base + '#' + p.toString();
+}
+
+function showShare() {
+  // Full link: ALL props (including deleted), ALL eval state
+  document.getElementById('sh-full').value = buildUrl(BASKET, ES);
+
+  // Helper link: only non-deleted props, only non-deleted eval state
+  const helperBasket = PROPS.filter(p => !gE(p.key).deleted).map(p => p.key).join(',');
+  const helperState = {};
+  Object.entries(ES).forEach(([k, v]) => { if (!v.deleted) helperState[k] = v; });
+  document.getElementById('sh-help').value = buildUrl(helperBasket, helperState);
+
+  document.getElementById('ovl').classList.add('open');
+}
+
+function closeModal() { document.getElementById('ovl').classList.remove('open'); }
+
+function copyTA(id, btnId) {
+  const ta = document.getElementById(id);
+  ta.select();
+  navigator.clipboard.writeText(ta.value).catch(() => {
+    // fallback
+    document.execCommand('copy');
+  });
+  const b = document.getElementById(btnId), orig = b.textContent;
+  b.textContent = 'Copied! ✓';
+  setTimeout(() => { b.textContent = orig; }, 2000);
+}
+
+/* ── export CSV ─────────────────────────────────────────────────────── */
+function doExport() {
+  const h = 'No.,Region,Court ID,Deed No,Address,Type,Price,Area,Date,Stars,Status,Market Sell,Market Rent,Pros,Cons,Community,Units Sell,Units Rent,Road,Notes,LED URL\n';
+  const rows = PROPS.map((p, i) => {
+    const e = gE(p.key);
+    const esc = v => `"${(v || '').replace(/"/g, '""')}"`;
+    return [
+      i+1, gRgn(p), p.auc_id, p.chanote, esc(gAddr(p)), esc(gType(p)),
+      fmtP(gPrice(p)), esc(gArea(p)), gDate(p),
+      e.stars||0, e.status||'none',
+      esc(e.mSell), esc(e.mRent), esc(e.pros), esc(e.cons),
+      e.comm||'', esc(e.uSell), esc(e.uRent), e.road||'', esc(e.notes),
+      ledUrl(p)
+    ].join(',');
+  }).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff' + h + rows], { type: 'text/csv;charset=utf-8' }));
+  a.download = 'led_evaluation.csv';
+  a.click();
+}
+
+/* ── init ───────────────────────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', () => {
+  if (window.location.hash.includes('b=')) {
+    document.getElementById('uin').value = window.location.href;
+    doLoad();
+  }
+});
+document.getElementById('ovl').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+document.getElementById('lb').addEventListener('click', e => { if (e.target === e.currentTarget) closeLb(); });
+</script>
+</body>
+</html>
