@@ -59,37 +59,44 @@ main{padding:14px 16px;max-width:1200px;margin:0 auto}
 .tbtn.active{background:var(--ac-bg);color:var(--ac);border-color:var(--ac-bd)}
 .share-btn{background:var(--ac-bg)!important;color:var(--ac)!important;border-color:var(--ac-bd)!important}
 
+/* AREA HEADER */
 .area-hdr{display:flex;align-items:center;gap:8px;margin:16px 0 10px}
 .area-lbl{font-size:13px;font-weight:600;color:var(--tx2)}
 .area-cnt{font-size:11px;color:var(--tx3);background:var(--sf2);padding:2px 8px;border-radius:20px}
-.area-hbtn{font-size:11px;color:var(--ac);cursor:pointer;margin-left:auto;padding:3px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--sf)}
-.area-hbtn:hover{background:var(--ac-bg)}
+.area-actions{display:flex;gap:6px;margin-left:auto}
+.area-btn{font-size:11px;color:var(--ac);cursor:pointer;padding:3px 9px;border:1px solid var(--bd);border-radius:6px;background:var(--sf)}
+.area-btn:hover{background:var(--ac-bg)}
+.area-btn.del-area{color:#c0392b;border-color:#f5c6c6}
+.area-btn.del-area:hover{background:#fdecea}
 
+/* CARDS */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:14px}
 
 .card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .15s;position:relative}
 .card:hover{box-shadow:0 2px 14px rgba(0,0,0,.09)}
-.card.deleted{opacity:.35}
+.card.deleted{opacity:.32;pointer-events:none}
 .card.pri{border-top:3px solid var(--pri-t)}
 .card.int{border-top:3px solid var(--int-t)}
 .card.wat{border-top:3px solid var(--wat-t)}
 
-.del-btn{position:absolute;top:7px;right:7px;z-index:5;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.del-btn{position:absolute;top:7px;right:7px;z-index:5;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;pointer-events:all}
 .del-btn:hover{background:rgba(192,57,43,.9)}
+.card.deleted .del-btn{opacity:1}
 
-/* photo + map */
+/* PHOTO + MAP */
 .card-media{position:relative;height:180px;background:var(--sf2);overflow:hidden;flex-shrink:0}
 .card-img{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer}
 .no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--tx3);font-size:12px;flex-direction:column;gap:4px}
-.map-btn{position:absolute;bottom:6px;left:6px;font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;z-index:4}
+.map-btn{position:absolute;bottom:6px;left:6px;font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;z-index:4;pointer-events:all}
 .map-btn:hover{background:rgba(0,0,0,.8)}
 .map-frame{position:absolute;inset:0;z-index:3;background:var(--sf2);display:none}
 .map-frame iframe{width:100%;height:100%;border:none}
 
-.rgn-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--sf2);color:var(--tx2);border:1px solid var(--bd);white-space:nowrap}
+.rgn-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--sf2);color:var(--tx2);border:1px solid var(--bd);white-space:nowrap;flex-shrink:0}
 .card-body{padding:11px 13px;display:flex;flex-direction:column;gap:8px;flex:1}
 .card-addr{font-size:13px;font-weight:500;line-height:1.4}
 .card-meta{font-size:11px;color:var(--tx3);margin-top:2px}
+
 .mg{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px}
 .mi{font-size:12px;color:var(--tx2)}
 .mi strong{color:var(--tx);font-weight:500}
@@ -108,30 +115,52 @@ main{padding:14px 16px;max-width:1200px;margin:0 auto}
 .b-wat{background:var(--wat-bg);color:var(--wat-t)}
 .b-pas{background:var(--pas-bg);color:var(--pas-t)}
 
-.ev-sec{border-top:1px solid var(--bd);padding-top:8px;display:flex;flex-direction:column;gap:7px}
+/* EVAL FIELDS */
+.ev-sec{border-top:1px solid var(--bd);padding-top:8px;display:flex;flex-direction:column;gap:8px}
 .ev-lbl{font-size:11px;font-weight:500;color:var(--tx2);margin-bottom:2px;display:block}
+.ev-lbl-desc{font-size:10px;color:var(--tx3);font-weight:400}
 .ev-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .ev-in{width:100%;font-size:12px;padding:5px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--sf2);color:var(--tx);outline:none;font-family:inherit}
 .ev-in:focus{border-color:var(--ac)}
 .ev-in::placeholder{color:var(--tx3)}
 textarea.ev-in{resize:vertical;min-height:50px;line-height:1.4}
 
-.tog-row{display:flex;gap:4px}
-.tog{flex:1;font-size:11px;padding:4px 0;border:1px solid var(--bd);border-radius:6px;background:var(--sf);color:var(--tx2);cursor:pointer;text-align:center}
-.tog.on-green{border-color:var(--pri-t);background:var(--pri-bg);color:var(--pri-t);font-weight:500}
-.tog.on-amber{border-color:var(--wat-t);background:var(--wat-bg);color:var(--wat-t);font-weight:500}
-.tog.on-gray{border-color:var(--bd2);background:var(--sf2);color:var(--tx);font-weight:500}
-.tog.on-blue{border-color:var(--ac);background:var(--ac-bg);color:var(--ac);font-weight:500}
+/* ROAD TOGGLE — 3 buttons each with sub-textbox */
+.road-opts{display:flex;flex-direction:column;gap:6px}
+.road-opt{border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.road-opt-hdr{display:flex;align-items:center;gap:8px;padding:6px 10px;cursor:pointer;background:var(--sf)}
+.road-opt-hdr:hover{background:var(--sf2)}
+.road-opt-hdr.sel-road{background:var(--ac-bg);border-color:var(--ac-bd)}
+.road-dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--bd2);flex-shrink:0}
+.road-dot.on{background:var(--ac);border-color:var(--ac)}
+.road-opt-title{font-size:12px;font-weight:500;flex:1}
+.road-opt-sub{font-size:11px;color:var(--tx3)}
+.road-note{padding:0 10px 8px;display:none}
+.road-note.show{display:block}
+.road-note input{width:100%;font-size:12px;padding:4px 7px;border:1px solid var(--bd);border-radius:6px;background:var(--sf2);color:var(--tx);outline:none;font-family:inherit}
+.road-note input:focus{border-color:var(--ac)}
+.road-note input::placeholder{color:var(--tx3)}
 
-.clinks{display:flex;gap:6px;flex-wrap:wrap}
-.clink{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--ac);text-decoration:none;padding:4px 8px;border:1px solid var(--ac-bd);border-radius:6px;cursor:pointer;background:none}
-.clink:hover{background:var(--ac-bg)}
+/* GOOGLE MAPS LINK INPUT */
+.maps-link-wrap{display:flex;flex-direction:column;gap:4px}
+.maps-link-row{display:flex;gap:6px;align-items:center}
+.maps-link-row input{flex:1;font-size:12px;padding:5px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--sf2);color:var(--tx);outline:none;font-family:inherit;min-width:0}
+.maps-link-row input:focus{border-color:var(--ac)}
+.maps-link-row input::placeholder{color:var(--tx3)}
+.maps-open-btn{font-size:12px;padding:5px 10px;border:1px solid var(--ac-bd);border-radius:7px;background:var(--ac-bg);color:var(--ac);cursor:pointer;white-space:nowrap;text-decoration:none;flex-shrink:0}
+.maps-open-btn:hover{background:var(--ac);color:#fff}
+.maps-open-btn.disabled{opacity:.4;pointer-events:none}
 
+/* LED LINK (small, bottom) */
+.led-link-small{font-size:11px;color:var(--tx3);text-decoration:none}
+.led-link-small:hover{color:var(--ac)}
+
+/* LOADING */
 .center-msg{text-align:center;padding:60px 20px;color:var(--tx2)}
 .spin{width:36px;height:36px;border:3px solid var(--bd);border-top-color:var(--ac);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* modal */
+/* MODAL */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:16px}
 .overlay.open{display:flex}
 .modal{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
@@ -142,11 +171,11 @@ textarea.ev-in{resize:vertical;min-height:50px;line-height:1.4}
 .share-block textarea{width:100%;height:56px;font-size:11px;font-family:monospace;border:1px solid var(--bd);border-radius:7px;background:var(--sf2);color:var(--tx);padding:7px;resize:none;margin-bottom:8px}
 .copy-btn{font-size:12px;padding:6px 14px;border-radius:7px;cursor:pointer;border:1px solid var(--ac);background:var(--ac);color:#fff;display:block;width:100%;text-align:center}
 .copy-btn:hover{opacity:.9}
-.close-btn{font-size:12px;padding:6px 14px;border-radius:7px;cursor:pointer;border:1px solid var(--bd2);background:var(--sf2);color:var(--tx);display:block;width:100%;text-align:center;margin-top:4px}
+.close-btn{font-size:12px;padding:6px 14px;border-radius:7px;cursor:pointer;border:1px solid var(--bd2);background:var(--sf2);color:var(--tx);display:block;width:100%;text-align:center;margin-top:8px}
 
 .footer{margin-top:12px;font-size:11px;color:var(--tx3);text-align:center}
 
-/* table */
+/* TABLE */
 .twrap{background:var(--sf);border:1px solid var(--bd);border-radius:10px;overflow:auto}
 table{width:100%;border-collapse:collapse;font-size:12px}
 thead th{padding:8px 10px;text-align:left;font-size:10px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bd);background:var(--sf2);white-space:nowrap}
@@ -159,7 +188,7 @@ td{padding:7px 10px;vertical-align:middle}
 .ntd{font-size:12px;outline:none;background:transparent;border:none;color:var(--tx);font-family:inherit;width:110px}
 .ntd::placeholder{color:var(--tx3)}
 
-/* lightbox */
+/* LIGHTBOX */
 .lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;align-items:center;justify-content:center}
 .lb.open{display:flex}
 .lb img{max-width:90vw;max-height:90vh;border-radius:8px;object-fit:contain}
@@ -204,7 +233,7 @@ td{padding:7px 10px;vertical-align:middle}
     <select id="af" onchange="render()"><option value="">ทุกพื้นที่</option></select>
     <select id="delf" onchange="render()">
       <option value="active">Active เท่านั้น</option>
-      <option value="all">ทั้งหมด (รวม deleted)</option>
+      <option value="all">ทั้งหมด</option>
       <option value="deleted">Deleted เท่านั้น</option>
     </select>
     <button class="tbtn active" id="btn-grid" onclick="setView('grid')">⊞ Cards</button>
@@ -224,23 +253,18 @@ td{padding:7px 10px;vertical-align:middle}
 <div class="overlay" id="ovl">
   <div class="modal">
     <h2>📋 Share / บันทึกการประเมิน</h2>
-
     <div class="share-block">
-      <h3>🔗 Your full link</h3>
-      <p>รวมทุก property รวม deleted — ใช้สำหรับตัวเองหรือ backup<br>
-      <strong>deleted ยังอยู่ใน link นี้</strong> แต่จะโชว์เป็นสีจางๆ เมื่อเปิด</p>
+      <h3>🔗 Your full link (สำหรับตัวเอง)</h3>
+      <p>รวมทุก property รวม deleted — ถ้ากด ✕ ออก deleted ยังอยู่ใน link นี้ แต่จะโชว์จาง</p>
       <textarea id="sh-full" readonly></textarea>
       <button class="copy-btn" id="cp-full" onclick="copyTA('sh-full','cp-full')">Copy full link</button>
     </div>
-
     <div class="share-block">
       <h3>👷 Helper link (ส่งให้ helper)</h3>
-      <p>ไม่รวม property ที่กด ✕ ออก — helper จะเห็นแค่รายการที่คุณอนุมัติแล้ว<br>
-      <strong>ถ้าคุณ delete แล้วกด Share → Helper link จะไม่มีรายการนั้น</strong></p>
+      <p>ไม่รวม property ที่กด ✕ — helper เห็นแค่รายการที่คุณเลือกไว้</p>
       <textarea id="sh-help" readonly></textarea>
       <button class="copy-btn" id="cp-help" onclick="copyTA('sh-help','cp-help')">Copy helper link</button>
     </div>
-
     <button class="close-btn" onclick="closeModal()">ปิด</button>
   </div>
 </div>
@@ -248,555 +272,423 @@ td{padding:7px 10px;vertical-align:middle}
 <!-- LIGHTBOX -->
 <div class="lb" id="lb" onclick="closeLb()">
   <button class="lb-x" onclick="closeLb()">✕</button>
-  <img id="lb-img" src="" alt="property photo">
+  <img id="lb-img" src="" alt="property photo" referrerpolicy="no-referrer">
 </div>
 
 <script>
-/* ── state ─────────────────────────────────────────────────────────── */
-let PROPS = [];
-let ES = {};
-let BASKET = '';
-let VIEW = 'grid';
-let JCACHE = null;
+let PROPS=[],ES={},BASKET='',VIEW='grid',JCACHE=null;
+const SM={priority:{l:'Priority',cls:'b-pri',cc:'pri'},interested:{l:'Interested',cls:'b-int',cc:'int'},watch:{l:'Watching',cls:'b-wat',cc:'wat'},pass:{l:'Pass',cls:'b-pas',cc:'pas'}};
 
-const SM = {
-  priority: {l:'Priority', cls:'b-pri', cc:'pri'},
-  interested: {l:'Interested', cls:'b-int', cc:'int'},
-  watch: {l:'Watching', cls:'b-wat', cc:'wat'},
-  pass: {l:'Pass', cls:'b-pas', cc:'pas'},
-};
-
-/* ── localStorage ───────────────────────────────────────────────────── */
-function sk() { return 'led_ev4_' + BASKET.slice(0, 60).replace(/\W/g, '_'); }
-function loadES(bStr) {
-  const h = window.location.hash.slice(1), p = new URLSearchParams(h), e = p.get('e');
-  if (e) { try { return JSON.parse(decodeURIComponent(atob(e))); } catch(_) {} }
-  try { const s = localStorage.getItem('led_ev4_' + bStr.slice(0, 60).replace(/\W/g, '_')); if (s) return JSON.parse(s); } catch(_) {}
+/* ── storage ─── */
+function sk(){return 'led_ev5_'+BASKET.slice(0,60).replace(/\W/g,'_')}
+function loadES(b){
+  const h=window.location.hash.slice(1),p=new URLSearchParams(h),e=p.get('e');
+  if(e){try{return JSON.parse(decodeURIComponent(atob(e)))}catch(_){}}
+  try{const s=localStorage.getItem('led_ev5_'+b.slice(0,60).replace(/\W/g,'_'));if(s)return JSON.parse(s)}catch(_){}
   return {};
 }
-function saveES() { try { localStorage.setItem(sk(), JSON.stringify(ES)); } catch(_) {} }
-function gE(k) {
-  return ES[k] || { stars:0, status:'none', notes:'', mSell:'', mRent:'', pros:'', cons:'', comm:'', uSell:'', uRent:'', road:'', deleted:false };
+function saveES(){try{localStorage.setItem(sk(),JSON.stringify(ES))}catch(_){}}
+function gE(k){
+  return ES[k]||{stars:0,status:'none',notes:'',mSell:'',mRent:'',pros:'',cons:'',comm:'',uSell:'',uRent:'',road:'',roadNote:'',mapsLink:'',deleted:false};
 }
-function sE(k, o) { ES[k] = { ...gE(k), ...o }; saveES(); renderStats(); }
+function sE(k,o){ES[k]={...gE(k),...o};saveES();renderStats()}
 
-/* ── parse basket from URL string ───────────────────────────────────── */
-function parseBasket(raw) {
-  raw = (raw || '').trim();
-  const hi = raw.indexOf('#'); if (hi === -1) return null;
-  const p = new URLSearchParams(raw.slice(hi + 1));
-  const b = p.get('b'); if (!b) return null;
-  return b.split(',').filter(Boolean).map(s => {
-    const parts = s.split('_');
-    // basket_key = auc_id + '_' + chanote
-    // auc_id is the first part, chanote is the rest (chanote can contain underscores? unlikely but safe)
-    const auc_id = parts[0];
-    const chanote = parts.slice(1).join('_');
-    return { key: s, auc_id, chanote };
+/* ── parse basket ─── */
+function parseBasket(raw){
+  raw=(raw||'').trim();
+  const hi=raw.indexOf('#');if(hi===-1)return null;
+  const p=new URLSearchParams(raw.slice(hi+1));
+  const b=p.get('b');if(!b)return null;
+  return b.split(',').filter(Boolean).map(s=>{
+    const u=s.indexOf('_');
+    return{key:s, auc_id:s.slice(0,u), chanote:s.slice(u+1)};
   });
 }
+function autoLoad(v){if(v.includes('b='))doLoad()}
 
-function autoLoad(v) { if (v.includes('b=')) doLoad(); }
-
-/* ── fetch ALLDATA from index.html ──────────────────────────────────── */
-async function fetchAllData() {
-  if (JCACHE) return JCACHE;
-
-  // Build base URL — works on GitHub Pages and local server
-  // e.g. https://orangemangosteen.github.io/led-tracker/eval.html → base = .../led-tracker/
-  const base = window.location.href.replace(/\/eval\.html([^/]*)$/, '/').replace(/#.*/, '');
-  const r = await fetch(base + 'index.html');
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  const txt = await r.text();
-
-  // The scraper injects: var ALLDATA={...}; where ALLDATA is an object keyed by region name
-  // Each region value is an array of property objects
-  const m = txt.match(/var\s+ALLDATA\s*=\s*(\{[\s\S]*?\})\s*;/);
-  if (m) {
-    try {
-      const obj = JSON.parse(m[1]);
-      // flatten into single array, injecting region key as field
-      const flat = [];
-      Object.entries(obj).forEach(([regionKey, arr]) => {
-        if (Array.isArray(arr)) arr.forEach(item => flat.push({ _regionKey: regionKey, ...item }));
+/* ── fetch ALLDATA from index.html ─── */
+async function fetchAllData(){
+  if(JCACHE)return JCACHE;
+  const base=window.location.href.replace(/\/eval\.html([^/]*)$/,'/').replace(/#.*/,'');
+  const r=await fetch(base+'index.html');
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const txt=await r.text();
+  const m=txt.match(/var\s+ALLDATA\s*=\s*(\{[\s\S]*?\})\s*;/);
+  if(m){
+    try{
+      const obj=JSON.parse(m[1]);
+      const flat=[];
+      Object.entries(obj).forEach(([rk,arr])=>{
+        if(Array.isArray(arr))arr.forEach(item=>flat.push({_rk:rk,...item}));
       });
-      if (flat.length) { JCACHE = flat; return flat; }
-    } catch(e) { console.warn('ALLDATA parse failed:', e); }
+      if(flat.length){JCACHE=flat;return flat;}
+    }catch(e){console.warn('parse err',e)}
   }
-
-  // fallback: try flat array patterns
-  const pats = [
-    /(?:const|var|let)\s+(?:allData|DATA|properties|PROPS)\s*=\s*(\[[\s\S]*?\])\s*;/,
-    /window\._allData\s*=\s*(\[[\s\S]*?\])\s*;/,
-  ];
-  for (const re of pats) {
-    const m2 = txt.match(re);
-    if (!m2) continue;
-    try {
-      const d = JSON.parse(m2[1]);
-      if (Array.isArray(d) && d.length) { JCACHE = d; return d; }
-    } catch(_) {}
-  }
-
-  console.warn('Could not extract JSON from index.html');
   return null;
 }
 
-/* ── main load ──────────────────────────────────────────────────────── */
-async function doLoad() {
-  const raw = document.getElementById('uin').value.trim();
-  if (!raw) return;
-  const basket = parseBasket(raw);
-  if (!basket || !basket.length) {
-    document.getElementById('hint').innerHTML = '<span style="color:#c0392b">⚠️ ไม่พบ #b= basket — วาง URL เต็มจาก LED Tracker</span>';
-    return;
-  }
-
-  document.getElementById('hint').style.display = 'none';
-  document.getElementById('main').style.display = 'none';
-  document.getElementById('loading').style.display = 'block';
-  document.getElementById('lbtn').disabled = true;
-
-  BASKET = basket.map(b => b.key).join(',');
-  ES = loadES(BASKET);
-
-  let all = null;
-  try { all = await fetchAllData(); } catch(e) { console.warn('fetch failed:', e); }
-
-  // Match basket items to full property data
-  // basket_key in index.html = auc_id + '_' + chanote
-  // We match by basket_key field first, then by auc_id + chanote separately
-  PROPS = basket.map(b => {
-    let f = null;
-    if (all) {
-      // Primary: match basket_key field exactly
-      f = all.find(p => p.basket_key === b.key);
-      // Fallback: match auc_id and chanote separately
-      if (!f) f = all.find(p => String(p.auc_id) === String(b.auc_id) && String(p.chanote) === String(b.chanote));
-      // Fallback: just auc_id
-      if (!f) f = all.find(p => String(p.auc_id) === String(b.auc_id));
+/* ── main load ─── */
+async function doLoad(){
+  const raw=document.getElementById('uin').value.trim();if(!raw)return;
+  const basket=parseBasket(raw);
+  if(!basket||!basket.length){document.getElementById('hint').innerHTML='<span style="color:#c0392b">⚠️ ไม่พบ #b= basket</span>';return;}
+  document.getElementById('hint').style.display='none';
+  document.getElementById('main').style.display='none';
+  document.getElementById('loading').style.display='block';
+  document.getElementById('lbtn').disabled=true;
+  BASKET=basket.map(b=>b.key).join(',');
+  ES=loadES(BASKET);
+  let all=null;
+  try{all=await fetchAllData()}catch(e){console.warn(e)}
+  PROPS=basket.map(b=>{
+    let f=null;
+    if(all){
+      f=all.find(p=>p.basket_key===b.key);
+      if(!f)f=all.find(p=>String(p.auc_id)===String(b.auc_id)&&String(p.chanote)===String(b.chanote));
+      if(!f)f=all.find(p=>String(p.auc_id)===String(b.auc_id));
     }
-    return { key: b.key, auc_id: b.auc_id, chanote: b.chanote, ...(f || {}) };
+    return{key:b.key,auc_id:b.auc_id,chanote:b.chanote,...(f||{})};
   });
-
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('main').style.display = 'block';
-  document.getElementById('lbtn').disabled = false;
-
-  const enriched = PROPS.filter(p => p.address || p.addr).length;
-  document.getElementById('hdr-sub').textContent =
-    `${PROPS.length} รายการ · ${enriched} มีข้อมูล · กรมบังคับคดี`;
-
-  // Area filter
-  const areas = [...new Set(PROPS.map(p => gRgn(p)).filter(Boolean))];
-  const af = document.getElementById('af');
-  af.innerHTML = '<option value="">ทุกพื้นที่</option>';
-  areas.forEach(a => { const o = document.createElement('option'); o.value = a; o.textContent = a; af.appendChild(o); });
-
-  renderStats();
-  render();
+  document.getElementById('loading').style.display='none';
+  document.getElementById('main').style.display='block';
+  document.getElementById('lbtn').disabled=false;
+  const enr=PROPS.filter(p=>p.address).length;
+  document.getElementById('hdr-sub').textContent=`${PROPS.length} รายการ · ${enr} มีข้อมูล · กรมบังคับคดี`;
+  const areas=[...new Set(PROPS.map(p=>gRgn(p)).filter(Boolean))];
+  const af=document.getElementById('af');
+  af.innerHTML='<option value="">ทุกพื้นที่</option>';
+  areas.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;af.appendChild(o)});
+  renderStats();render();
 }
 
-/* ── field helpers ──────────────────────────────────────────────────── */
-function gAddr(p) { return p.address || p.addr || p.asset_address || p.location || ''; }
-function gPrice(p) {
-  const raw = p.appraisalPrice || p.price || p.start_price || 0;
-  if (!raw) return 0;
-  const n = parseFloat(String(raw).replace(/,/g, ''));
-  return isNaN(n) ? 0 : n;
-}
-function fmtP(n) {
-  if (!n) return '—';
-  if (n >= 1e6) return '฿' + (n / 1e6).toFixed(2) + 'M';
-  if (n >= 1e3) return '฿' + Math.round(n / 1e3) + 'K';
-  return '฿' + n.toLocaleString();
-}
+/* ── field helpers ─── */
+function gAddr(p){return p.address||p.addr||''}
+function gPrice(p){const n=parseFloat(String(p.appraisalPrice||p.price||0).replace(/,/g,''));return isNaN(n)?0:n}
+function fmtP(n){if(!n)return'—';if(n>=1e6)return'฿'+(n/1e6).toFixed(2)+'M';if(n>=1e3)return'฿'+Math.round(n/1e3)+'K';return'฿'+n.toLocaleString()}
+function gPhoto(p){return p.imageUrl||p.image||p.img||''}
+function gDate(p){if(p.dates&&p.dates.length)return p.dates[0];return p.auction_date||p.date||''}
+function gType(p){return p.type||p.asset_type||''}
+function gArea(p){return p.wa?(p.wa+' ตร.ว.'):(p.area||p.rai||'')}
+function gRgn(p){return p.region_label||p.area_label||p._rk||''}
+function gAmpur(p){return p.ampur||''}
+function gTumbol(p){return p.tumbol||''}
+function ledUrl(p){return`https://asset.led.go.th/newbidreg/asset_open.asp?Law_Court_ID=${p.auc_id}&deed_no=${p.chanote}`}
+function mapsEmbedFromAddr(p){return'https://www.google.com/maps?q='+encodeURIComponent(gAddr(p))+'&output=embed'}
 
-// Images: LED site blocks hotlinking from external domains.
-// We use a Google image proxy trick: https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&url=ENCODED_URL
-// This proxies the LED image through Google's servers, bypassing the referer block.
-function proxyImg(url) {
-  if (!url) return '';
-  if (url.startsWith('data:')) return url; // already embedded
-  return 'https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&url=' + encodeURIComponent(url);
-}
-
-function gPhoto(p) {
-  const raw = p.imageUrl || p.image || p.img || p.img_url || p.image_url || p.thumbnail || '';
-  return raw ? proxyImg(raw) : '';
-}
-function gPhotoRaw(p) { return p.imageUrl || p.image || p.img || p.img_url || p.image_url || p.thumbnail || ''; }
-
-function gDate(p) {
-  if (p.dates && Array.isArray(p.dates) && p.dates.length) return p.dates[0];
-  return p.auction_date || p.next_auction || p.date || '';
-}
-function gType(p) { return p.type || p.asset_type || p.property_type || ''; }
-function gArea(p) { return p.wa ? (p.wa + ' ตร.ว.') : (p.area || p.rai || p.size || ''); }
-function gRgn(p) { return p.region_label || p.area_label || p.region || p._regionKey || ''; }
-function gAmpur(p) { return p.ampur || p.amphoe || ''; }
-function gTumbol(p) { return p.tumbol || ''; }
-
-function ledUrl(p) {
-  return `https://asset.led.go.th/newbidreg/asset_open.asp?Law_Court_ID=${p.auc_id}&deed_no=${p.chanote}`;
-}
-function mapsUrl(p) {
-  return 'https://www.google.com/maps?q=' + encodeURIComponent(gAddr(p));
-}
-function mapsEmbed(p) {
-  return 'https://www.google.com/maps?q=' + encodeURIComponent(gAddr(p)) + '&output=embed';
-}
-
-/* ── stats ──────────────────────────────────────────────────────────── */
-function renderStats() {
-  let rated = 0, pri = 0, int_ = 0, del_ = 0, tot = 0, sc = 0;
-  PROPS.forEach(p => {
-    const e = gE(p.key);
-    if (e.stars > 0) { rated++; tot += e.stars; sc++; }
-    if (e.status === 'priority') pri++;
-    if (e.status === 'interested') int_++;
-    if (e.deleted) del_++;
-  });
-  const avg = sc > 0 ? (tot / sc).toFixed(1) + ' ★' : '—';
-  document.getElementById('stats').innerHTML = `
+/* ── stats ─── */
+function renderStats(){
+  let rated=0,pri=0,int_=0,del_=0,tot=0,sc=0;
+  PROPS.forEach(p=>{const e=gE(p.key);if(e.stars>0){rated++;tot+=e.stars;sc++;}if(e.status==='priority')pri++;if(e.status==='interested')int_++;if(e.deleted)del_++;});
+  document.getElementById('stats').innerHTML=`
     <div class="stat"><div class="stat-l">รวม</div><div class="stat-v">${PROPS.length}</div></div>
-    <div class="stat"><div class="stat-l">Active</div><div class="stat-v">${PROPS.length - del_}</div></div>
+    <div class="stat"><div class="stat-l">Active</div><div class="stat-v">${PROPS.length-del_}</div></div>
     <div class="stat"><div class="stat-l">Priority</div><div class="stat-v">${pri}</div></div>
     <div class="stat"><div class="stat-l">Interested</div><div class="stat-v">${int_}</div></div>
-    <div class="stat"><div class="stat-l">Avg ★</div><div class="stat-v">${avg}</div></div>`;
+    <div class="stat"><div class="stat-l">Avg ★</div><div class="stat-v">${sc>0?(tot/sc).toFixed(1)+' ★':'—'}</div></div>`;
 }
 
-/* ── filter ─────────────────────────────────────────────────────────── */
-function filtered() {
-  const s = (document.getElementById('srch').value || '').toLowerCase();
-  const sf = document.getElementById('sf').value;
-  const rf = document.getElementById('rf').value;
-  const af = document.getElementById('af').value;
-  const df = document.getElementById('delf').value;
-  return PROPS.filter(p => {
-    const e = gE(p.key), st = e.status || 'none', stars = e.stars || 0;
-    if (df === 'active' && e.deleted) return false;
-    if (df === 'deleted' && !e.deleted) return false;
-    if (sf) { if (sf === 'none' ? st !== 'none' : st !== sf) return false; }
-    if (rf) {
-      if (rf === '0' && stars > 0) return false;
-      if (rf === '1' && stars === 0) return false;
-      if (parseInt(rf) > 1 && stars < parseInt(rf)) return false;
-    }
-    if (af && gRgn(p) !== af) return false;
-    if (s) {
-      const hay = [p.key, gAddr(p), gType(p), gRgn(p), e.notes || '', e.pros || '', e.cons || '', p.auc_id, p.chanote].join(' ').toLowerCase();
-      if (!hay.includes(s)) return false;
-    }
+/* ── filter ─── */
+function filtered(){
+  const s=(document.getElementById('srch').value||'').toLowerCase();
+  const sf=document.getElementById('sf').value,rf=document.getElementById('rf').value;
+  const af=document.getElementById('af').value,df=document.getElementById('delf').value;
+  return PROPS.filter(p=>{
+    const e=gE(p.key),st=e.status||'none',stars=e.stars||0;
+    if(df==='active'&&e.deleted)return false;
+    if(df==='deleted'&&!e.deleted)return false;
+    if(sf){if(sf==='none'?st!=='none':st!==sf)return false}
+    if(rf){if(rf==='0'&&stars>0)return false;if(rf==='1'&&stars===0)return false;if(parseInt(rf)>1&&stars<parseInt(rf))return false}
+    if(af&&gRgn(p)!==af)return false;
+    if(s){const hay=[p.key,gAddr(p),gType(p),gRgn(p),e.notes||'',e.pros||'',e.cons||'',p.auc_id,p.chanote].join(' ').toLowerCase();if(!hay.includes(s))return false}
     return true;
   });
 }
 
-/* ── render ─────────────────────────────────────────────────────────── */
-function render() {
-  const rows = filtered();
-  document.getElementById('foot').textContent = `แสดง ${rows.length} จาก ${PROPS.length} รายการ`;
-  if (VIEW === 'grid') renderGrid(rows); else renderTable(rows);
+/* ── render ─── */
+function render(){
+  const rows=filtered();
+  document.getElementById('foot').textContent=`แสดง ${rows.length} จาก ${PROPS.length} รายการ`;
+  if(VIEW==='grid')renderGrid(rows);else renderTable(rows);
 }
 
-function renderGrid(rows) {
-  const regions = [...new Set(rows.map(p => gRgn(p) || '(ไม่ระบุพื้นที่)'))];
-  const ca = document.getElementById('content');
-  ca.innerHTML = '';
-  regions.forEach(region => {
-    const group = rows.filter(p => (gRgn(p) || '(ไม่ระบุพื้นที่)') === region);
-    const sec = document.createElement('div');
-    sec.innerHTML = `
+function renderGrid(rows){
+  const regions=[...new Set(rows.map(p=>gRgn(p)||'(ไม่ระบุพื้นที่)'))];
+  const ca=document.getElementById('content');ca.innerHTML='';
+  regions.forEach(region=>{
+    const group=rows.filter(p=>(gRgn(p)||'(ไม่ระบุพื้นที่)')===region);
+    const eid=region.replace(/[^a-zA-Z0-9]/g,'_');
+    const sec=document.createElement('div');
+    sec.innerHTML=`
       <div class="area-hdr">
         <span class="area-lbl">📍 ${region}</span>
         <span class="area-cnt">${group.length} รายการ</span>
-        <button class="area-hbtn" id="ahbtn-${eid(region)}" onclick="toggleArea('${eid(region)}')">ซ่อน</button>
+        <div class="area-actions">
+          <button class="area-btn" id="ahbtn-${eid}" onclick="toggleArea('${eid}')">ซ่อน</button>
+          <button class="area-btn del-area" onclick="deleteArea('${region}')">ลบทั้ง area</button>
+        </div>
       </div>
-      <div class="grid" id="ag-${eid(region)}">${group.map(p => cardHTML(p)).join('')}</div>`;
+      <div class="grid" id="ag-${eid}">${group.map(p=>cardHTML(p)).join('')}</div>`;
     ca.appendChild(sec);
   });
 }
 
-function eid(s) { return s.replace(/[^a-zA-Z0-9]/g, '_'); }
+function cardHTML(p){
+  const e=gE(p.key),st=e.status||'none',sm=SM[st],del_=e.deleted||false;
+  const photo=gPhoto(p),rgn=gRgn(p),addr=gAddr(p);
+  const stars=[1,2,3,4,5].map(n=>`<span class="star${(e.stars||0)>=n?' on':''}" onclick="starClick('${p.key}',${n})">★</span>`).join('');
 
-function cardHTML(p) {
-  const e = gE(p.key), st = e.status || 'none', sm = SM[st];
-  const del_ = e.deleted || false;
-  const photo = gPhoto(p);
-  const rawPhoto = gPhotoRaw(p);
-  const rgn = gRgn(p);
+  // Photo: referrerpolicy="no-referrer" bypasses LED hotlink block
+  const photoEl=photo
+    ?`<img class="card-img" src="${photo}" referrerpolicy="no-referrer" onclick="openLb('${photo}')" loading="lazy" onerror="this.parentElement.innerHTML='<div class=no-img>📷<br>ไม่มีรูป</div>'">`
+    :`<div class="no-img">📷<br>ไม่มีรูป</div>`;
 
-  const stars = [1,2,3,4,5].map(n =>
-    `<span class="star${(e.stars||0) >= n ? ' on' : ''}" onclick="starClick('${p.key}',${n})">★</span>`
-  ).join('');
+  const mapSrc=addr?mapsEmbedFromAddr(p):'';
+  const mapBtnHtml=addr?`<button class="map-btn" onclick="toggleMap(event,'${p.key}')">🗺 แผนที่</button>`:'';
+  const mapFrameHtml=addr?`<div class="map-frame" id="mf-${p.key}"><iframe src="" data-src="${mapSrc}" loading="lazy"></iframe></div>`:'';
 
-  const photoEl = photo
-    ? `<img class="card-img" src="${photo}" onclick="openLb('${photo}')" loading="lazy"
-         onerror="this.parentElement.innerHTML='<div class=no-img>📷<br>ไม่มีรูป</div>'">`
-    : `<div class="no-img">📷<br>ไม่มีรูป</div>`;
+  // Road options
+  const roadOpts=[
+    {val:'กว้าง',    title:'กว้าง',     sub:'ติดถนนใหญ่'},
+    {val:'ปานกลาง', title:'ปานกลาง',   sub:'ซอยกว้างพอสมควร'},
+    {val:'แคบ',     title:'แคบ',       sub:'ซอยเล็ก / เข้าออกลำบาก'},
+  ];
+  const roadHTML=roadOpts.map(o=>`
+    <div class="road-opt">
+      <div class="road-opt-hdr${e.road===o.val?' sel-road':''}" onclick="roadClick('${p.key}','${o.val}')">
+        <div class="road-dot${e.road===o.val?' on':''}"></div>
+        <span class="road-opt-title">${o.title}</span>
+        <span class="road-opt-sub">${o.sub}</span>
+      </div>
+      <div class="road-note${e.road===o.val?' show':''}">
+        <input type="text" placeholder="รายละเอียดเพิ่มเติม…" value="${e.road===o.val&&e.roadNote?e.roadNote:''}"
+          oninput="fi('${p.key}','roadNote',this.value)"
+          onclick="event.stopPropagation()">
+      </div>
+    </div>`).join('');
 
-  const hasAddr = !!gAddr(p);
-  const mapBtnHtml = hasAddr ? `<button class="map-btn" onclick="toggleMap(event,'${p.key}')">🗺 แผนที่</button>` : '';
-  const mapFrameHtml = hasAddr
-    ? `<div class="map-frame" id="mf-${p.key}"><iframe src="" data-src="${mapsEmbed(p)}" loading="lazy"></iframe></div>`
-    : '';
+  // Maps link
+  const hasLink=!!(e.mapsLink);
+  const mapsLinkEl=`
+    <div class="maps-link-wrap">
+      <span class="ev-lbl">📍 Google Maps link</span>
+      <div class="maps-link-row">
+        <input type="text" placeholder="วาง Google Maps link ที่นี่ แล้วกด Save…"
+          value="${(e.mapsLink||'').replace(/"/g,'&quot;')}"
+          oninput="fi('${p.key}','mapsLink',this.value)"
+          onblur="saveES()">
+        <a class="maps-open-btn${hasLink?'':' disabled'}" id="mlink-${p.key}"
+          href="${e.mapsLink||'#'}" target="_blank" rel="noopener"
+          onclick="return checkMapsLink('${p.key}')">เปิด</a>
+      </div>
+    </div>`;
 
-  const togCls = (field, val, colorOn) => e[field] === val ? 'on-' + colorOn : '';
-
-  return `<div class="card${sm ? ' ' + sm.cc : ''}${del_ ? ' deleted' : ''}" id="c-${p.key}">
-    <button class="del-btn" onclick="toggleDel('${p.key}')" title="${del_ ? 'กู้คืน' : 'ลบออก'}">${del_ ? '↩' : '✕'}</button>
-    <div class="card-media">
-      ${photoEl}
-      ${mapBtnHtml}
-      ${mapFrameHtml}
-    </div>
+  return`<div class="card${sm?' '+sm.cc:''}${del_?' deleted':''}" id="c-${p.key}">
+    <button class="del-btn" onclick="toggleDel('${p.key}')" title="${del_?'กู้คืน':'ลบออก'}">${del_?'↩':'✕'}</button>
+    <div class="card-media">${photoEl}${mapBtnHtml}${mapFrameHtml}</div>
     <div class="card-body">
       <div>
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:4px">
-          <div class="card-addr">${gAddr(p) || 'ไม่มีที่อยู่'}</div>
-          ${rgn ? `<span class="rgn-badge">${rgn}</span>` : ''}
+          <div class="card-addr">${addr||'ไม่มีที่อยู่'}</div>
+          ${rgn?`<span class="rgn-badge">${rgn}</span>`:''}
         </div>
-        <div class="card-meta">${[gAmpur(p), gTumbol(p)].filter(Boolean).join(' · ')}</div>
-        <div class="card-meta" style="margin-top:1px">${p.auc_id} / ${p.chanote}</div>
+        <div class="card-meta">${[gAmpur(p),gTumbol(p)].filter(Boolean).join(' · ')}</div>
+        <div class="card-meta">${p.auc_id} / ${p.chanote} &nbsp;·&nbsp; <a class="led-link-small" href="${ledUrl(p)}" target="_blank">↗ ดูใน LED</a></div>
       </div>
-
       <div class="mg">
         <div class="mi">ราคาตั้ง<br><strong class="price">${fmtP(gPrice(p))}</strong></div>
-        <div class="mi">ประเภท<br><strong>${gType(p) || '—'}</strong></div>
-        <div class="mi">เนื้อที่<br><strong>${gArea(p) || '—'}</strong></div>
-        <div class="mi">นัดขาย<br><strong>${gDate(p) || '—'}</strong></div>
+        <div class="mi">ประเภท<br><strong>${gType(p)||'—'}</strong></div>
+        <div class="mi">เนื้อที่<br><strong>${gArea(p)||'—'}</strong></div>
+        <div class="mi">นัดขาย<br><strong>${gDate(p)||'—'}</strong></div>
       </div>
-
       <div class="stars">${stars}</div>
-      ${sm ? `<div><span class="badge ${sm.cls}">${sm.l}</span></div>` : ''}
-
+      ${sm?`<div><span class="badge ${sm.cls}">${sm.l}</span></div>`:''}
       <select class="sel" onchange="statusClick('${p.key}',this.value)">
-        <option value="none"  ${st==='none'     ?'selected':''}>— ยังไม่ประเมิน</option>
-        <option value="priority"  ${st==='priority'  ?'selected':''}>🔴 Priority</option>
-        <option value="interested"${st==='interested'?'selected':''}>🔵 Interested</option>
-        <option value="watch"     ${st==='watch'     ?'selected':''}>🟡 Watching</option>
-        <option value="pass"      ${st==='pass'      ?'selected':''}>⚫ Pass</option>
+        <option value="none"       ${st==='none'?'selected':''}>— ยังไม่ประเมิน</option>
+        <option value="priority"   ${st==='priority'?'selected':''}>🔴 Priority</option>
+        <option value="interested" ${st==='interested'?'selected':''}>🔵 Interested</option>
+        <option value="watch"      ${st==='watch'?'selected':''}>🟡 Watching</option>
+        <option value="pass"       ${st==='pass'?'selected':''}>⚫ Pass</option>
       </select>
 
       <div class="ev-sec">
         <div class="ev-row">
           <div>
             <span class="ev-lbl">💰 ราคาตลาด ขาย</span>
-            <input class="ev-in" type="text" placeholder="฿/ตร.ว." value="${e.mSell||''}"
-              oninput="fi('${p.key}','mSell',this.value)">
+            <input class="ev-in" type="text" placeholder="฿/ตร.ว." value="${e.mSell||''}" oninput="fi('${p.key}','mSell',this.value)">
           </div>
           <div>
             <span class="ev-lbl">🏠 ราคาตลาด เช่า</span>
-            <input class="ev-in" type="text" placeholder="฿/เดือน" value="${e.mRent||''}"
-              oninput="fi('${p.key}','mRent',this.value)">
+            <input class="ev-in" type="text" placeholder="฿/เดือน" value="${e.mRent||''}" oninput="fi('${p.key}','mRent',this.value)">
           </div>
         </div>
 
         <div>
           <span class="ev-lbl">✅ จุดเด่น</span>
-          <textarea class="ev-in" placeholder="ใกล้ BTS, ถนนใหญ่, ทำเลดี…"
-            oninput="fi('${p.key}','pros',this.value)">${e.pros||''}</textarea>
+          <textarea class="ev-in" placeholder="ใกล้ BTS, ถนนใหญ่, ทำเลดี…" oninput="fi('${p.key}','pros',this.value)">${e.pros||''}</textarea>
         </div>
         <div>
           <span class="ev-lbl">⚠️ จุดด้อย</span>
-          <textarea class="ev-in" placeholder="ซอยแคบ, ใต้ทางด่วน…"
-            oninput="fi('${p.key}','cons',this.value)">${e.cons||''}</textarea>
+          <textarea class="ev-in" placeholder="ซอยแคบ, ใต้ทางด่วน…" oninput="fi('${p.key}','cons',this.value)">${e.cons||''}</textarea>
         </div>
 
         <div>
           <span class="ev-lbl">👥 ความเป็นชุมชน</span>
-          <div class="tog-row">
-            <button class="tog ${togCls('comm','ดีมาก','green')}"   onclick="tog('${p.key}','comm','ดีมาก')">ดีมาก</button>
-            <button class="tog ${togCls('comm','ปานกลาง','amber')}" onclick="tog('${p.key}','comm','ปานกลาง')">ปานกลาง</button>
-            <button class="tog ${togCls('comm','น้อย','gray')}"     onclick="tog('${p.key}','comm','น้อย')">น้อย</button>
-          </div>
+          <textarea class="ev-in" placeholder="เช่น มีร้านค้า ตลาด หมู่บ้านหนาแน่น / เงียบ ไม่มีชุมชน…" oninput="fi('${p.key}','comm',this.value)">${e.comm||''}</textarea>
         </div>
 
         <div class="ev-row">
           <div>
             <span class="ev-lbl">📦 ขาย โดยรอบ</span>
-            <input class="ev-in" type="text" placeholder="เช่น 5 ยูนิต" value="${e.uSell||''}"
-              oninput="fi('${p.key}','uSell',this.value)">
+            <input class="ev-in" type="text" placeholder="เช่น 5 ยูนิต" value="${e.uSell||''}" oninput="fi('${p.key}','uSell',this.value)">
           </div>
           <div>
             <span class="ev-lbl">🔑 เช่า โดยรอบ</span>
-            <input class="ev-in" type="text" placeholder="เช่น 3 ยูนิต" value="${e.uRent||''}"
-              oninput="fi('${p.key}','uRent',this.value)">
+            <input class="ev-in" type="text" placeholder="เช่น 3 ยูนิต" value="${e.uRent||''}" oninput="fi('${p.key}','uRent',this.value)">
           </div>
         </div>
 
         <div>
           <span class="ev-lbl">🛣 ความกว้างถนน</span>
-          <div class="tog-row">
-            <button class="tog ${togCls('road','กว้าง','green')}"     onclick="tog('${p.key}','road','กว้าง')">กว้าง</button>
-            <button class="tog ${togCls('road','ปานกลาง','amber')}"   onclick="tog('${p.key}','road','ปานกลาง')">ปานกลาง</button>
-            <button class="tog ${togCls('road','แคบ','gray')}"        onclick="tog('${p.key}','road','แคบ')">แคบ</button>
-          </div>
+          <div class="road-opts">${roadHTML}</div>
         </div>
 
         <div>
           <span class="ev-lbl">📝 หมายเหตุ</span>
-          <textarea class="ev-in" placeholder="โน้ตอื่นๆ…"
-            oninput="fi('${p.key}','notes',this.value)">${e.notes||''}</textarea>
+          <textarea class="ev-in" placeholder="โน้ตอื่นๆ…" oninput="fi('${p.key}','notes',this.value)">${e.notes||''}</textarea>
         </div>
-      </div>
 
-      <div class="clinks">
-        <a class="clink" href="${ledUrl(p)}" target="_blank" rel="noopener">↗ LED</a>
-        ${hasAddr ? `<a class="clink" href="${mapsUrl(p)}" target="_blank" rel="noopener">📍 Maps</a>` : ''}
-        ${rawPhoto ? `<button class="clink" onclick="openLb('${gPhoto(p)}')">🔍 รูปเต็ม</button>` : ''}
+        ${mapsLinkEl}
       </div>
     </div>
   </div>`;
 }
 
-function renderTable(rows) {
-  document.getElementById('content').innerHTML = `<div class="twrap"><table>
-    <thead><tr>
-      <th>#</th><th>รูป</th><th>ที่อยู่</th><th>พื้นที่</th><th>ราคา</th>
-      <th>ประเภท</th><th>ขนาด</th><th>นัด</th><th>★</th><th>Status</th>
-      <th>ตลาดขาย</th><th>ตลาดเช่า</th><th>ถนน</th><th>ชุมชน</th><th>หมายเหตุ</th><th></th>
-    </tr></thead>
-    <tbody>${rows.map((p, i) => {
-      const e = gE(p.key), st = e.status || 'none', sm = SM[st];
-      const photo = gPhoto(p);
-      const stars = [1,2,3,4,5].map(n =>
-        `<span class="star${(e.stars||0)>=n?' on':''}" onclick="starClick('${p.key}',${n})" style="font-size:15px">★</span>`
-      ).join('');
-      return `<tr style="${e.deleted?'opacity:.35':''}">
-        <td class="sm">${i + 1}</td>
-        <td>${photo ? `<img class="thumb" src="${photo}" loading="lazy" onerror="this.style.display='none'">` : '—'}</td>
-        <td style="max-width:160px;font-size:12px">${gAddr(p)||'—'}<br><span class="sm">${p.auc_id}/${p.chanote}</span></td>
-        <td class="sm">${gRgn(p)||'—'}</td>
-        <td style="white-space:nowrap;font-weight:600">${fmtP(gPrice(p))}</td>
-        <td class="sm">${gType(p)||'—'}</td>
-        <td class="sm">${gArea(p)||'—'}</td>
-        <td class="sm">${gDate(p)||'—'}</td>
-        <td><div style="display:flex;gap:1px">${stars}</div></td>
-        <td>${sm ? `<span class="badge ${sm.cls}">${sm.l}</span>` : ''}</td>
-        <td class="sm">${e.mSell||'—'}</td>
-        <td class="sm">${e.mRent||'—'}</td>
-        <td class="sm">${e.road||'—'}</td>
-        <td class="sm">${e.comm||'—'}</td>
-        <td><input class="ntd" type="text" placeholder="Notes…"
-          value="${(e.notes||'').replace(/"/g,'&quot;')}"
-          oninput="fi('${p.key}','notes',this.value)"></td>
-        <td><a class="clink" style="font-size:10px;padding:3px 6px" href="${ledUrl(p)}" target="_blank">LED</a></td>
-      </tr>`;
-    }).join('')}</tbody></table></div>`;
+function renderTable(rows){
+  document.getElementById('content').innerHTML=`<div class="twrap"><table>
+  <thead><tr><th>#</th><th>รูป</th><th>ที่อยู่</th><th>พื้นที่</th><th>ราคา</th><th>ประเภท</th><th>★</th><th>Status</th><th>ตลาดขาย</th><th>ตลาดเช่า</th><th>ถนน</th><th>หมายเหตุ</th><th></th></tr></thead>
+  <tbody>${rows.map((p,i)=>{
+    const e=gE(p.key),st=e.status||'none',sm=SM[st],photo=gPhoto(p);
+    const stars=[1,2,3,4,5].map(n=>`<span class="star${(e.stars||0)>=n?' on':''}" onclick="starClick('${p.key}',${n})" style="font-size:15px">★</span>`).join('');
+    return`<tr style="${e.deleted?'opacity:.32':''}">
+      <td class="sm">${i+1}</td>
+      <td>${photo?`<img class="thumb" src="${photo}" referrerpolicy="no-referrer" loading="lazy" onerror="this.style.display='none'">`:'—'}</td>
+      <td style="max-width:160px;font-size:12px">${gAddr(p)||'—'}<br><span class="sm">${p.auc_id}/${p.chanote}</span></td>
+      <td class="sm">${gRgn(p)||'—'}</td>
+      <td style="white-space:nowrap;font-weight:600">${fmtP(gPrice(p))}</td>
+      <td class="sm">${gType(p)||'—'}</td>
+      <td><div style="display:flex;gap:1px">${stars}</div></td>
+      <td>${sm?`<span class="badge ${sm.cls}">${sm.l}</span>`:''}</td>
+      <td class="sm">${e.mSell||'—'}</td><td class="sm">${e.mRent||'—'}</td>
+      <td class="sm">${e.road||'—'}</td>
+      <td><input class="ntd" type="text" placeholder="Notes…" value="${(e.notes||'').replace(/"/g,'&quot;')}" oninput="fi('${p.key}','notes',this.value)"></td>
+      <td><a style="font-size:10px;color:var(--ac)" href="${ledUrl(p)}" target="_blank">LED</a></td>
+    </tr>`;
+  }).join('')}</tbody></table></div>`;
 }
 
-/* ── actions ────────────────────────────────────────────────────────── */
-function fi(k, f, v) { ES[k] = { ...gE(k), [f]: v }; saveES(); }
-function starClick(k, n) { const c = gE(k).stars || 0; sE(k, { stars: c === n ? 0 : n }); render(); }
-function statusClick(k, v) { sE(k, { status: v }); render(); }
-function tog(k, field, val) { const c = gE(k)[field]; sE(k, { [field]: c === val ? '' : val }); render(); }
-function toggleDel(k) { sE(k, { deleted: !gE(k).deleted }); render(); }
+/* ── actions ─── */
+function fi(k,f,v){ES[k]={...gE(k),[f]:v};saveES()}
+function starClick(k,n){const c=gE(k).stars||0;sE(k,{stars:c===n?0:n});render()}
+function statusClick(k,v){sE(k,{status:v});render()}
+function toggleDel(k){sE(k,{deleted:!gE(k).deleted});render()}
 
-function toggleArea(eidVal) {
-  const g = document.getElementById('ag-' + eidVal);
-  const b = document.getElementById('ahbtn-' + eidVal);
-  if (!g) return;
-  const hidden = g.style.display === 'none';
-  g.style.display = hidden ? '' : 'none';
-  if (b) b.textContent = hidden ? 'ซ่อน' : 'แสดง';
-}
-
-function toggleMap(evt, key) {
-  evt.stopPropagation();
-  const f = document.getElementById('mf-' + key);
-  if (!f) return;
-  const showing = f.style.display === 'block';
-  if (!showing) {
-    const ifr = f.querySelector('iframe');
-    if (ifr && !ifr.src && ifr.dataset.src) ifr.src = ifr.dataset.src;
-    f.style.display = 'block';
-    evt.target.textContent = '✕ ปิดแผนที่';
-  } else {
-    f.style.display = 'none';
-    evt.target.textContent = '🗺 แผนที่';
-  }
-}
-
-function setView(v) {
-  VIEW = v;
-  document.getElementById('btn-grid').className = 'tbtn' + (v === 'grid' ? ' active' : '');
-  document.getElementById('btn-table').className = 'tbtn' + (v === 'table' ? ' active' : '');
+function roadClick(k,val){
+  const cur=gE(k).road;
+  const next=cur===val?'':val;
+  // if switching roads, clear the note
+  sE(k,{road:next,roadNote:next===val?gE(k).roadNote:''});
   render();
 }
 
-/* ── lightbox ───────────────────────────────────────────────────────── */
-function openLb(src) { document.getElementById('lb-img').src = src; document.getElementById('lb').classList.add('open'); }
-function closeLb() { document.getElementById('lb').classList.remove('open'); }
-
-/* ── share — builds proper https URL ────────────────────────────────── */
-function buildUrl(bStr, state) {
-  // Always use the GitHub Pages origin, not file://
-  // Base = same path as eval.html but on the real host
-  const base = window.location.origin + window.location.pathname; // .../eval.html
-  const p = new URLSearchParams();
-  p.set('b', bStr);
-  p.set('e', btoa(encodeURIComponent(JSON.stringify(state))));
-  return base + '#' + p.toString();
+function deleteArea(region){
+  if(!confirm(`ลบ property ทั้งหมดใน "${region}" ออก?\n(กู้คืนได้ใน dropdown "ทั้งหมด")`))return;
+  PROPS.forEach(p=>{if(gRgn(p)===region)sE(p.key,{deleted:true})});
+  render();
 }
 
-function showShare() {
-  // Full link: ALL props (including deleted), ALL eval state
-  document.getElementById('sh-full').value = buildUrl(BASKET, ES);
+function toggleArea(eid){
+  const g=document.getElementById('ag-'+eid),b=document.getElementById('ahbtn-'+eid);
+  if(!g)return;
+  const hidden=g.style.display==='none';
+  g.style.display=hidden?'':'none';
+  if(b)b.textContent=hidden?'ซ่อน':'แสดง';
+}
 
-  // Helper link: only non-deleted props, only non-deleted eval state
-  const helperBasket = PROPS.filter(p => !gE(p.key).deleted).map(p => p.key).join(',');
-  const helperState = {};
-  Object.entries(ES).forEach(([k, v]) => { if (!v.deleted) helperState[k] = v; });
-  document.getElementById('sh-help').value = buildUrl(helperBasket, helperState);
+function toggleMap(evt,key){
+  evt.stopPropagation();
+  const f=document.getElementById('mf-'+key);if(!f)return;
+  const show=f.style.display==='block';
+  if(!show){
+    const ifr=f.querySelector('iframe');
+    if(ifr&&!ifr.src&&ifr.dataset.src)ifr.src=ifr.dataset.src;
+    f.style.display='block';
+    evt.target.textContent='✕ ปิด';
+  }else{
+    f.style.display='none';
+    evt.target.textContent='🗺 แผนที่';
+  }
+}
 
+function checkMapsLink(k){
+  const e=gE(k);
+  if(!e.mapsLink){alert('ยังไม่มี link — วาง Google Maps link แล้วกด Save ก่อน');return false;}
+  return true;
+}
+
+function setView(v){
+  VIEW=v;
+  document.getElementById('btn-grid').className='tbtn'+(v==='grid'?' active':'');
+  document.getElementById('btn-table').className='tbtn'+(v==='table'?' active':'');
+  render();
+}
+
+/* ── lightbox ─── */
+function openLb(src){document.getElementById('lb-img').src=src;document.getElementById('lb').classList.add('open')}
+function closeLb(){document.getElementById('lb').classList.remove('open')}
+
+/* ── share ─── */
+function buildUrl(bStr,state){
+  const base=window.location.origin+window.location.pathname;
+  const p=new URLSearchParams();
+  p.set('b',bStr);
+  p.set('e',btoa(encodeURIComponent(JSON.stringify(state))));
+  return base+'#'+p.toString();
+}
+function showShare(){
+  document.getElementById('sh-full').value=buildUrl(BASKET,ES);
+  const hb=PROPS.filter(p=>!gE(p.key).deleted).map(p=>p.key).join(',');
+  const hs={};Object.entries(ES).forEach(([k,v])=>{if(!v.deleted)hs[k]=v});
+  document.getElementById('sh-help').value=buildUrl(hb,hs);
   document.getElementById('ovl').classList.add('open');
 }
-
-function closeModal() { document.getElementById('ovl').classList.remove('open'); }
-
-function copyTA(id, btnId) {
-  const ta = document.getElementById(id);
-  ta.select();
-  navigator.clipboard.writeText(ta.value).catch(() => {
-    // fallback
-    document.execCommand('copy');
-  });
-  const b = document.getElementById(btnId), orig = b.textContent;
-  b.textContent = 'Copied! ✓';
-  setTimeout(() => { b.textContent = orig; }, 2000);
+function closeModal(){document.getElementById('ovl').classList.remove('open')}
+function copyTA(id,btnId){
+  const ta=document.getElementById(id);ta.select();
+  navigator.clipboard.writeText(ta.value).catch(()=>{try{document.execCommand('copy')}catch(_){}});
+  const b=document.getElementById(btnId),o=b.textContent;
+  b.textContent='Copied! ✓';setTimeout(()=>{b.textContent=o},2000);
 }
 
-/* ── export CSV ─────────────────────────────────────────────────────── */
-function doExport() {
-  const h = 'No.,Region,Court ID,Deed No,Address,Type,Price,Area,Date,Stars,Status,Market Sell,Market Rent,Pros,Cons,Community,Units Sell,Units Rent,Road,Notes,LED URL\n';
-  const rows = PROPS.map((p, i) => {
-    const e = gE(p.key);
-    const esc = v => `"${(v || '').replace(/"/g, '""')}"`;
-    return [
-      i+1, gRgn(p), p.auc_id, p.chanote, esc(gAddr(p)), esc(gType(p)),
-      fmtP(gPrice(p)), esc(gArea(p)), gDate(p),
-      e.stars||0, e.status||'none',
-      esc(e.mSell), esc(e.mRent), esc(e.pros), esc(e.cons),
-      e.comm||'', esc(e.uSell), esc(e.uRent), e.road||'', esc(e.notes),
-      ledUrl(p)
-    ].join(',');
+/* ── export ─── */
+function doExport(){
+  const h='No.,Region,Court ID,Deed No,Address,Type,Price,Area,Date,Stars,Status,Market Sell,Market Rent,Pros,Cons,Community,Units Sell,Units Rent,Road,Road Note,Maps Link,Notes,LED URL\n';
+  const rows=PROPS.map((p,i)=>{
+    const e=gE(p.key),esc=v=>`"${(v||'').replace(/"/g,'""')}"`;
+    return[i+1,gRgn(p),p.auc_id,p.chanote,esc(gAddr(p)),esc(gType(p)),fmtP(gPrice(p)),esc(gArea(p)),gDate(p),
+      e.stars||0,e.status||'none',esc(e.mSell),esc(e.mRent),esc(e.pros),esc(e.cons),
+      esc(e.comm),esc(e.uSell),esc(e.uRent),e.road||'',esc(e.roadNote),esc(e.mapsLink),esc(e.notes),ledUrl(p)].join(',');
   }).join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob(['\ufeff' + h + rows], { type: 'text/csv;charset=utf-8' }));
-  a.download = 'led_evaluation.csv';
-  a.click();
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\ufeff'+h+rows],{type:'text/csv;charset=utf-8'}));
+  a.download='led_evaluation.csv';a.click();
 }
 
-/* ── init ───────────────────────────────────────────────────────────── */
-window.addEventListener('DOMContentLoaded', () => {
-  if (window.location.hash.includes('b=')) {
-    document.getElementById('uin').value = window.location.href;
-    doLoad();
-  }
+/* ── init ─── */
+window.addEventListener('DOMContentLoaded',()=>{
+  if(window.location.hash.includes('b=')){document.getElementById('uin').value=window.location.href;doLoad();}
 });
-document.getElementById('ovl').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
-document.getElementById('lb').addEventListener('click', e => { if (e.target === e.currentTarget) closeLb(); });
+document.getElementById('ovl').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal()});
+document.getElementById('lb').addEventListener('click',e=>{if(e.target===e.currentTarget)closeLb()});
 </script>
 </body>
 </html>
